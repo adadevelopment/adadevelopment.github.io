@@ -2,7 +2,7 @@
     background-image: url('../images/background.png');
     background-repeat: no-repeat;
     background-position: center; 
-	background-color: rgb(0, 160, 160);
+	background-color: rgb(70, 160, 160);/* outra cor possivel: rgb(130, 180, 180) */
 	text-align: center;
 	color: white;
 	min-height: 150px;
@@ -25,10 +25,15 @@
 
 .home-button  a {
 	padding: 5px;	
+	border: 1px;
+	border-radius: 3px;
+	color: white;
+	background-color: rgb(70, 160, 160);
 }
 
 .home-button  a:hover {
     background-color: #eee;
+	color: rgb(50, 50, 50);
 }
 
 .internationalization {
@@ -45,4 +50,21 @@
 	width: 80%;
 	display: inline-block;
 	text-align: justify;
+	margin-bottom: 10px;
+	font-size: 20px;
+	color: rgb(70, 70, 70);
+	line-height: 150%;
+}
+
+.date-content {
+	width: 80%;
+	display: inline-block;
+	text-align: left;
+	margin: 10px;
+	color: rgb(110, 110, 110);
+	font-style: italic;
+}
+
+img {
+	margin: 10px 20px 10px 20px;
 }
