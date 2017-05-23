@@ -1,0 +1,48 @@
+.content-head { 
+    background-image: url('../images/background.png');
+    background-repeat: no-repeat;
+    background-position: center; 
+	background-color: rgb(0, 160, 160);
+	text-align: center;
+	color: white;
+	min-height: 150px;
+	display: table;
+	width: 100%;
+}
+
+.inside-content-head {
+	vertical-align: middle;
+	position: relative;
+	display: table-cell;
+}
+.home-button {
+	text-align: left;
+	float: left;
+	padding: 5px;
+	vertical-align: middle;	
+	margin: 5px;
+}
+
+.home-button  a {
+	padding: 5px;	
+}
+
+.home-button  a:hover {
+    background-color: #eee;
+}
+
+.internationalization {
+	text-align: right;
+	margin: 10px;
+	vertical-align: middle;	
+}
+
+.div-content {
+	text-align: center;
+}
+
+.content {
+	width: 80%;
+	display: inline-block;
+	text-align: justify;
+}

@@ -51,33 +51,12 @@ a {
 	color: black;
 }
 
+/* general */
 
 body {
 	font-family: Arial, Helvetica, sans-serif;
 }
-.index-head { 
-    background-image: url('../images/background.png');
-    background-repeat: no-repeat;
-    background-position: center; 
-	background-color: rgb(0, 160, 160);
-	text-align: center;
-	color: white;
-	min-height: 250px;
-	display: table;
-	width: 100%;
-}
 
-.inside-index-head {
-	vertical-align: middle;
-	position: relative;
-	display: table-cell;
-}
-.internationalization {
-	text-align: right;
-	float: right;
-	padding: 10px;
-	vertical-align: middle;	
-}
 .title {
 	font-size: 40px;
 	padding-bottom: 20px;
@@ -85,46 +64,10 @@ body {
 .subtitle {
 	font-size: 28px;
 }
-ul.menu {
-	list-style-type: none;
-    margin-top: 10px;
-	text-align: center;
-	font-size: 20px;
-}
-
-.menu li {
-    display: inline-block;
-	margin-top: 10px;
-	margin-bottom:10px;
-	text-align: center;
-}
-.menu li a {
-	padding: 5px;
-	border: 2px solid #eee;
-	border-radius: 3px
-}
-
-.menu li a:hover {
-    background-color: #eee;
-}
 
 ul.topic {
 	list-style-type: none;
-    margin: 0;
 	text-align: center;
-	padding: 10px;
-}
-
-@media screen and (max-width: 642px) {
-  .topic li {
-    display: inline-block;
-	text-align: left;
-	width: 90%;
-	min-width: 100px;
-	max-width: 450px;
-	padding: 30px;
-	vertical-align: top;
-}
 }
 
 .topic li {
@@ -133,19 +76,31 @@ ul.topic {
 	width: 40%;
 	min-width: 100px;
 	max-width: 450px;
-	padding: 30px;
+	padding: 20px;
 	vertical-align: top;
 }
+
 .topic li a {
 	text-align: left;
 	font-size: 22px;
 }
-.topic div {
+
+.topic li div {
 	text-align: justify;
 	font-size: 17px;
 }
-
-
+ 
+@media (max-width: 500px) {
+  .topic li {
+		display: inline-block;
+		text-align: left;
+		width: 90%;
+		min-width: 100px;
+		max-width: 450px;
+		padding: 20px;
+		vertical-align: top;
+	}
+}
 
 footer {
 	line-height: 60px;
