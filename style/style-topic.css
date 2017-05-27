@@ -68,3 +68,34 @@
 img {
 	margin: 10px 20px 10px 20px;
 }
+
+.subtitle-content {
+	width: 80%;
+	display: inline-block;
+	text-align: left;
+	margin-bottom: 10px;
+	font-size: 24px;
+	color: rgb(70, 160, 160);
+	text-shadow: 1px 1px #eee;
+	line-height: 150%;
+}
+.content a {
+	color: rgb(110, 110, 110);
+	font-style: italic;
+}
+
+.code {
+	width: 80%;
+	text-align: left;
+	margin-bottom: 5px;
+	margin-top: 5px;
+	margin-left: auto;
+    margin-right: auto;
+	border-left: 2px solid rgb(70, 160, 160);
+    background-color: #f7f7f7;
+    padding: 1em;
+	font-size: 15px;
+	font-family: monospace;
+	overflow: auto;
+}
+

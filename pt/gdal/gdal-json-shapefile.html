@@ -1,9 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Gdal</title>
+    <title>Json para shapefile Gdal</title>
 	<link rel="icon" type="image/png" href="../../images/favicon.ico"/>
     <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="content-language" content="pt-br">
+	<meta name="author" content="Tamara Mendes">
+	<meta name="reply-to" content="adadevsite@gmail">
+	<meta name="keywords" content="gdal, json, shapefile, c#">
 	<link rel="stylesheet" href="../../style/style.css">
 	<link rel="stylesheet" href="../../style/style-topic.css">
 </head>
@@ -19,13 +23,272 @@
 <div class="internationalization"><a href="../../gdal/gdal-json-shapefile.html">[English]</a></div>
 
 <div class="div-content">
-	<div class="date-content">2 de Junho de 2017</div>
+	<div class="date-content">27 de Maio de 2017</div>
 	<p class="content">
-	Para converter um arquivo no formato json para shapefile... Para converter um arquivo no formato json para shapefile Para converter um arquivo no formato json para shapefile Para converter um arquivo no formato json para shapefile Para converter um arquivo no formato json para shapefile Para converter um arquivo no formato json para shapefile.
+	Neste artigo eu explico como converter um arquivo no formato json para shapefile usando a biblioteca Gdal em C#. 
+	Segue um exemplo de arquivo Json (você também pode baixar o <a href="http://github.com/adadevelopment/adadevfiles/blob/master/files/gdal-json-shapefile/example-data.json" target="_blank">arquivo completo</a>): 
 	</p>
+	<div class="code">
+  <pre style="margin: 0; line-height: 125%">{
+	&quot;features&quot;: [{
+		&quot;geometry&quot;: {
+			&quot;coordinates&quot;: [-37.2726631195437,
+			-9.91254751352393],
+			&quot;type&quot;: <span style="color: #a31515">&quot;Point&quot;</span>
+		},
+		&quot;properties&quot;: {
+			&quot;identifier&quot;: <span style="color: #a31515">&quot;12&quot;</span>,
+			&quot;serial_number&quot;: <span style="color: #a31515">&quot;29213220&quot;</span>,
+			&quot;name&quot;: <span style="color: #a31515">&quot;POINT-10&quot;</span>,
+			&quot;length&quot;: 3.0
+		},
+		&quot;type&quot;: <span style="color: #a31515">&quot;Feature&quot;</span>
+	},
+	{
+		&quot;geometry&quot;: {
+			&quot;coordinates&quot;: [-37.2726722686872,
+			-9.91252509027536],
+			&quot;type&quot;: <span style="color: #a31515">&quot;Point&quot;</span>
+		},
+		&quot;properties&quot;: {
+			&quot;identifier&quot;: <span style="color: #a31515">&quot;11&quot;</span>,
+			&quot;serial_number&quot;: <span style="color: #a31515">&quot;29213220&quot;</span>,
+			&quot;name&quot;: <span style="color: #a31515">&quot;POINT-10&quot;</span>,
+			&quot;length&quot;: 4.0,
+		},
+		&quot;type&quot;: <span style="color: #a31515">&quot;Feature&quot;</span>
+	}
+}</pre>
 </div>
 
-<footer>Contato: adadevsite@gmail.com</footer>
+	<p class="content">
+	Vamos para o passo a passo:
+	</p>
+	<h3 class="subtitle-content">Importar o Gdal no Visual Studio</h3>
+	<p class="content">
+	Primeiramente, importamos o Gdal para o projeto: no Visual Studio, clique com o botão direito no projeto, vá em "Manage NuGet packages", digite "Gdal" no campo de busca, selecione o Gdal (1.11.1 é a última versão disponível até o momento em que este artigo foi escrito) e instale. Selecione e instale também o Gdal.Native (sem ele o projeto compila mas não executa corretamente). A classe "GdalConfiguration.cs" será criada automaticamente. Elá será usada antes de iniciar o método para conversão.
+	</p>
+	<p class="content">
+	Para zipar os arquivos gerados do shapefile, será necessária também a biblioteca "DotNetZip". Adicione-a também pelo "Manage NuGet packages". Caso não queira essa funcionalidade, não é necessário instalar.
+	</p>
+	<p class="content">
+	Para importá-lo em sua classe use:
+	</p>
+	<div class="code">
+	<pre style="margin: 0; line-height: 125%"><span style="color: #0000ff">using</span> OSGeo.OGR;
+<span style="color: #0000ff">using</span> OSGeo.OSR;</pre>
+	</div>
+	
+	<h3 class="subtitle-content">Configurar o Gdal</h3>
+	<p class="content">
+	Antes de usar as classes do Gdal, precisamos configurá-lo. Para isso, basta chamar os métodos <strong>ConfigureGdal</strong> e <strong>ConfigureOgr</strong> da classe <strong><a href="https://github.com/adadevelopment/adadevfiles/blob/master/files/gdal-json-shapefile/GdalConfiguration.cs" target="_blank">GdalConfiguration.cs</a></strong>. Você pode chamá-los, por exemplo, no construtor de sua classe.
+	</p>
+	<div class="code">
+	<pre style="margin: 0; line-height: 125%"><span style="color: #0000ff">public</span> GdalUtilities() {
+    GdalConfiguration.ConfigureGdal();
+    GdalConfiguration.ConfigureOgr();
+}</pre>
+	</div>
+	<h3 class="subtitle-content">Abrir o Json com o Gdal</h3>
+	<p class="content">
+	Código para abrir o arquivo json com o Gdal e pegar sua camada:
+	</p>
+	<div class="code">
+	<pre style="margin: 0; line-height: 125%">Driver jsonFileDriver = Ogr.GetDriverByName(<span style="color: #a31515">&quot;GeoJSON&quot;</span>);
+DataSource jsonFile = Ogr.Open(jsonFilePath, 0);
+<span style="color: #0000ff">if</span>(jsonFile == <span style="color: #0000ff">null</span>) {
+    <span style="color: #0000ff">return</span> <span style="color: #0000ff">false</span>;
+}
+Layer jsonLayer = jsonFile.GetLayerByIndex(0);</pre>
+	</div>
+	<h3 class="subtitle-content">Criar o arquivo shapefile</h3>
+	<p class="content">
+	Código para criar o arquivo shapefile com o Gdal. Caso o arquivo já exista ele será removido.
+	</p>
+	<div class="code">
+	<pre style="margin: 0; line-height: 125%"><span style="color: #2b91af">string</span> filesPathName = shapeFilePath.Substring(0, shapeFilePath.Length - 4);
+removeShapeFileIfExists(filesPathName);
+
+Driver esriShapeFileDriver = Ogr.GetDriverByName(<span style="color: #a31515">&quot;ESRI Shapefile&quot;</span>);
+DataSource shapeFile = esriShapeFileDriver.CreateDataSource(shapeFilePath, <span style="color: #0000ff">new</span> <span style="color: #2b91af">string</span>[] { });
+Layer shplayer = shapeFile.CreateLayer(jsonLayer.GetName(), jsonLayer.GetSpatialRef(), jsonLayer.GetGeomType(), <span style="color: #0000ff">new</span> <span style="color: #2b91af">string</span>[] { });</pre>
+	</div>
+	
+	<h3 class="subtitle-content">Copiar os dados e propriedades do json para o shapefile</h3>
+	<p class="content">
+	Código para criar copiar as propriedades e valores de cada elemento do arquivo json para o novo shapefile criado:
+	</p>
+	<div class="code">
+	<pre style="margin: 0; line-height: 125%"><span style="color: #008000">// create fields (properties) in new layer</span>
+Feature jsonFeature = jsonLayer.GetNextFeature();
+<span style="color: #0000ff">for</span>(<span style="color: #2b91af">int</span> i = 0; i &lt; jsonFeature.GetFieldCount(); i++) {
+	FieldDefn fieldDefn = <span style="color: #0000ff">new</span> FieldDefn(getValidFieldName(jsonFeature.GetFieldDefnRef(i)), jsonFeature.GetFieldDefnRef(i).GetFieldType());
+	shplayer.CreateField(fieldDefn, 1);
+}
+
+<span style="color: #0000ff">while</span>(jsonFeature != <span style="color: #0000ff">null</span>) {
+	Geometry geometry = jsonFeature.GetGeometryRef();
+	Feature shpFeature = createGeometryFromGeometry(geometry, shplayer, jsonLayer.GetSpatialRef());
+
+	<span style="color: #008000">// copy values for each field</span>
+	<span style="color: #0000ff">for</span>(<span style="color: #2b91af">int</span> i = 0; i &lt; jsonFeature.GetFieldCount(); i++) {
+		<span style="color: #0000ff">if</span>(FieldType.OFTInteger == jsonFeature.GetFieldDefnRef(i).GetFieldType()) {
+			shpFeature.SetField(getValidFieldName(jsonFeature.GetFieldDefnRef(i)), jsonFeature.GetFieldAsInteger(i));
+		} <span style="color: #0000ff">else</span> <span style="color: #0000ff">if</span>(FieldType.OFTReal == jsonFeature.GetFieldDefnRef(i).GetFieldType()) {
+			shpFeature.SetField(getValidFieldName(jsonFeature.GetFieldDefnRef(i)), jsonFeature.GetFieldAsDouble(i));
+		} <span style="color: #0000ff">else</span> {
+			shpFeature.SetField(getValidFieldName(jsonFeature.GetFieldDefnRef(i)), jsonFeature.GetFieldAsString(i));
+		}
+	}
+	shplayer.SetFeature(shpFeature);
+
+	jsonFeature = jsonLayer.GetNextFeature();
+}</pre>
+	</div>
+	
+	<h3 class="subtitle-content">Fechar o shapefile e salvar como zip</h3>
+	<p class="content">
+	Código para fechar o shapefile criado e setado e zipar todos arquivos gerados.
+	</p>
+	<div class="code">
+	<pre style="margin: 0; line-height: 125%">shapeFile.Dispose();
+
+<span style="color: #008000">// if you want to generate zip of generated files</span>
+<span style="color: #2b91af">string</span> zipName = filesPathName + <span style="color: #a31515">&quot;.zip&quot;</span>;
+CompressToZipFile(<span style="color: #0000ff">new</span> List&lt;<span style="color: #2b91af">string</span>&gt;() { 
+	shapeFilePath, filesPathName + <span style="color: #a31515">&quot;.dbf&quot;</span>, filesPathName + <span style="color: #a31515">&quot;.prj&quot;</span>, filesPathName + <span style="color: #a31515">&quot;.shx&quot;</span> }, zipName);
+</pre>
+	</div>
+	
+	<h3 class="subtitle-content">Converter json para shapefile - código completo </h3>
+	<div class="code">
+	<pre style="margin: 0; line-height: 125%"><span style="color: #0000ff">new</span> GdalUtilities().convertJsonToShapeFile(<span style="color: #a31515">@&quot;C:\development\example-data.json&quot;</span>, <span style="color: #a31515">@&quot;C:\development\shapefile-out.shp&quot;</span>);</pre>
+	</div>
+	
+	<div class="code">
+	<pre style="margin: 0; line-height: 125%"><span style="color: #0000ff">using</span> OSGeo.OGR;
+<span style="color: #0000ff">using</span> OSGeo.OSR;
+<span style="color: #0000ff">using</span> System.Collections.Generic;
+<span style="color: #0000ff">using</span> Ionic.Zip;
+<span style="color: #0000ff">using</span> System.IO;
+
+<span style="color: #0000ff">namespace</span> Adadev.GdalModule {
+
+    <span style="color: #0000ff">public</span> <span style="color: #0000ff">class</span> <span style="color: #2b91af">GdalUtilities</span> {
+
+        <span style="color: #0000ff">public</span> GdalUtilities() {
+            GdalConfiguration.ConfigureGdal();
+            GdalConfiguration.ConfigureOgr();
+        }
+
+        <span style="color: #0000ff">public</span> <span style="color: #2b91af">bool</span> convertJsonToShapeFile(<span style="color: #2b91af">string</span> jsonFilePath, <span style="color: #2b91af">string</span> shapeFilePath) {
+
+            Driver jsonFileDriver = Ogr.GetDriverByName(<span style="color: #a31515">&quot;GeoJSON&quot;</span>);
+            DataSource jsonFile = Ogr.Open(jsonFilePath, 0);
+            <span style="color: #0000ff">if</span>(jsonFile == <span style="color: #0000ff">null</span>) {
+                <span style="color: #0000ff">return</span> <span style="color: #0000ff">false</span>;
+            }
+
+            <span style="color: #2b91af">string</span> filesPathName = shapeFilePath.Substring(0, shapeFilePath.Length - 4);
+            removeShapeFileIfExists(filesPathName);
+
+            Layer jsonLayer = jsonFile.GetLayerByIndex(0);
+
+            Driver esriShapeFileDriver = Ogr.GetDriverByName(<span style="color: #a31515">&quot;ESRI Shapefile&quot;</span>);
+            DataSource shapeFile = Ogr.Open(shapeFilePath, 0);
+
+            shapeFile = esriShapeFileDriver.CreateDataSource(shapeFilePath, <span style="color: #0000ff">new</span> <span style="color: #2b91af">string</span>[] { });
+            Layer shplayer = shapeFile.CreateLayer(jsonLayer.GetName(), jsonLayer.GetSpatialRef(), jsonLayer.GetGeomType(), <span style="color: #0000ff">new</span> <span style="color: #2b91af">string</span>[] { });
+
+            <span style="color: #008000">// create fields (properties) in new layer</span>
+            Feature jsonFeature = jsonLayer.GetNextFeature();
+            <span style="color: #0000ff">for</span>(<span style="color: #2b91af">int</span> i = 0; i &lt; jsonFeature.GetFieldCount(); i++) {
+                FieldDefn fieldDefn = <span style="color: #0000ff">new</span> FieldDefn(getValidFieldName(jsonFeature.GetFieldDefnRef(i)), jsonFeature.GetFieldDefnRef(i).GetFieldType());
+                shplayer.CreateField(fieldDefn, 1);
+            }
+
+            <span style="color: #0000ff">while</span>(jsonFeature != <span style="color: #0000ff">null</span>) {
+                Geometry geometry = jsonFeature.GetGeometryRef();
+                Feature shpFeature = createGeometryFromGeometry(geometry, shplayer, jsonLayer.GetSpatialRef());
+
+                <span style="color: #008000">// copy values for each field</span>
+                <span style="color: #0000ff">for</span>(<span style="color: #2b91af">int</span> i = 0; i &lt; jsonFeature.GetFieldCount(); i++) {
+                    <span style="color: #0000ff">if</span>(FieldType.OFTInteger == jsonFeature.GetFieldDefnRef(i).GetFieldType()) {
+                        shpFeature.SetField(getValidFieldName(jsonFeature.GetFieldDefnRef(i)), jsonFeature.GetFieldAsInteger(i));
+                    } <span style="color: #0000ff">else</span> <span style="color: #0000ff">if</span>(FieldType.OFTReal == jsonFeature.GetFieldDefnRef(i).GetFieldType()) {
+                        shpFeature.SetField(getValidFieldName(jsonFeature.GetFieldDefnRef(i)), jsonFeature.GetFieldAsDouble(i));
+                    } <span style="color: #0000ff">else</span> {
+                        shpFeature.SetField(getValidFieldName(jsonFeature.GetFieldDefnRef(i)), jsonFeature.GetFieldAsString(i));
+                    }
+                }
+                shplayer.SetFeature(shpFeature);
+
+                jsonFeature = jsonLayer.GetNextFeature();
+            }
+            shapeFile.Dispose();
+
+            <span style="color: #008000">// if you want to generate zip of generated files</span>
+            <span style="color: #2b91af">string</span> zipName = filesPathName + <span style="color: #a31515">&quot;.zip&quot;</span>;
+            CompressToZipFile(<span style="color: #0000ff">new</span> List&lt;<span style="color: #2b91af">string</span>&gt;() { shapeFilePath, filesPathName + <span style="color: #a31515">&quot;.dbf&quot;</span>, filesPathName + <span style="color: #a31515">&quot;.prj&quot;</span>, filesPathName + <span style="color: #a31515">&quot;.shx&quot;</span> }, zipName);
+
+            <span style="color: #0000ff">return</span> <span style="color: #0000ff">true</span>;
+        }
+
+        <span style="color: #0000ff">private</span> <span style="color: #0000ff">void</span> removeShapeFileIfExists(<span style="color: #2b91af">string</span> filesPathName) {
+            removeFileIfExists(filesPathName + <span style="color: #a31515">&quot;.shp&quot;</span>);
+            removeFileIfExists(filesPathName + <span style="color: #a31515">&quot;.shx&quot;</span>);
+            removeFileIfExists(filesPathName + <span style="color: #a31515">&quot;.prj&quot;</span>);
+            removeFileIfExists(filesPathName + <span style="color: #a31515">&quot;.zip&quot;</span>);
+        }
+
+        <span style="color: #0000ff">public</span> <span style="color: #0000ff">static</span> <span style="color: #2b91af">bool</span> removeFileIfExists(<span style="color: #2b91af">string</span> filePath) {
+            <span style="color: #0000ff">if</span>(File.Exists(filePath)) {
+                File.Delete(filePath);
+                <span style="color: #0000ff">return</span> <span style="color: #0000ff">true</span>;
+            }
+            <span style="color: #0000ff">return</span> <span style="color: #0000ff">false</span>;
+        }
+
+        <span style="color: #008000">// the field names in shapefile have limit of 10 characteres</span>
+        <span style="color: #0000ff">private</span> <span style="color: #2b91af">string</span> getValidFieldName(FieldDefn fieldDefn) {
+            <span style="color: #2b91af">string</span> fieldName = fieldDefn.GetName();
+            <span style="color: #0000ff">return</span> fieldName.Length &gt; 10 ? fieldName.Substring(0, 10) : fieldName;
+        }
+
+        <span style="color: #0000ff">private</span> Feature createGeometryFromGeometry(Geometry geometry, Layer layer, SpatialReference reference) {
+            Feature feature = <span style="color: #0000ff">new</span> Feature(layer.GetLayerDefn());
+
+            <span style="color: #2b91af">string</span> wktgeometry = <span style="color: #a31515">&quot;&quot;</span>;
+            geometry.ExportToWkt(<span style="color: #0000ff">out</span> wktgeometry);
+            Geometry newGeometry = Geometry.CreateFromWkt(wktgeometry);
+            newGeometry.AssignSpatialReference(reference);
+            newGeometry.SetPoint(0, geometry.GetX(0), geometry.GetY(0), 0);
+
+            feature.SetGeometry(newGeometry);
+            layer.CreateFeature(feature);
+
+            <span style="color: #0000ff">return</span> feature;
+        }
+
+        <span style="color: #0000ff">public</span> <span style="color: #0000ff">static</span> <span style="color: #0000ff">void</span> CompressToZipFile(List&lt;<span style="color: #2b91af">string</span>&gt; files, <span style="color: #2b91af">string</span> zipPath) {
+            using(ZipFile zip = <span style="color: #0000ff">new</span> ZipFile()) {
+                <span style="color: #0000ff">foreach</span>(<span style="color: #2b91af">string</span> file <span style="color: #0000ff">in</span> files) {
+                    zip.AddFile(file, <span style="color: #a31515">&quot;&quot;</span>);
+                }
+                zip.Save(zipPath);
+            }
+        }
+    }
+}</pre>
+	</div>
+	
+	<p class="content">
+	Você pode baixar o código completo e arquivos de exemplo no nosso <a href="http://github.com/adadevelopment/adadevfiles/blob/master/files/gdal-json-shapefile" target="_blank">repositório no Github</a>.
+	</p>	
+		
+</div>
+
+<footer>&copy 2017 Todos direitos reservados. <a href:"mailto:adadevsite@gmail.com" />adadevsite@gmail.com</a></footer>
 
 </body>
 </html>
