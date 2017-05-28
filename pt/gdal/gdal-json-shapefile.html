@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Json para shapefile Gdal</title>
+    <title>JSON para shapefile Gdal</title>
 	<link rel="icon" type="image/png" href="../../images/favicon.ico"/>
     <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
 	<meta http-equiv="content-language" content="pt-br">
@@ -25,8 +25,8 @@
 <div class="div-content">
 	<div class="date-content">27 de Maio de 2017</div>
 	<p class="content">
-	Neste artigo eu explico como converter um arquivo no formato json para shapefile usando a biblioteca Gdal em C#. 
-	Segue um exemplo de arquivo Json (você também pode baixar o <a href="http://github.com/adadevelopment/adadevfiles/blob/master/files/gdal-json-shapefile/example-data.json" target="_blank">arquivo completo</a>): 
+	Neste artigo eu explico como converter um arquivo no formato JSON para shapefile usando a biblioteca Gdal em C#. 
+	Segue um exemplo de arquivo JSON (você também pode baixar o <a href="http://github.com/adadevelopment/adadevfiles/blob/master/files/gdal-json-shapefile/example-data.json" target="_blank">arquivo completo</a>): 
 	</p>
 	<div class="code">
   <pre style="margin: 0; line-height: 125%">{
@@ -89,9 +89,9 @@
     GdalConfiguration.ConfigureOgr();
 }</pre>
 	</div>
-	<h3 class="subtitle-content">Abrir o Json com o Gdal</h3>
+	<h3 class="subtitle-content">Abrir o JSON com o Gdal</h3>
 	<p class="content">
-	Código para abrir o arquivo json com o Gdal e pegar sua camada:
+	Código para abrir o arquivo JSON com o Gdal e pegar sua camada:
 	</p>
 	<div class="code">
 	<pre style="margin: 0; line-height: 125%">Driver jsonFileDriver = Ogr.GetDriverByName(<span style="color: #a31515">&quot;GeoJSON&quot;</span>);
@@ -114,9 +114,9 @@ DataSource shapeFile = esriShapeFileDriver.CreateDataSource(shapeFilePath, <span
 Layer shplayer = shapeFile.CreateLayer(jsonLayer.GetName(), jsonLayer.GetSpatialRef(), jsonLayer.GetGeomType(), <span style="color: #0000ff">new</span> <span style="color: #2b91af">string</span>[] { });</pre>
 	</div>
 	
-	<h3 class="subtitle-content">Copiar os dados e propriedades do json para o shapefile</h3>
+	<h3 class="subtitle-content">Copiar os dados e propriedades do JSON para o shapefile</h3>
 	<p class="content">
-	Código para criar copiar as propriedades e valores de cada elemento do arquivo json para o novo shapefile criado:
+	Código para criar copiar as propriedades e valores de cada elemento do arquivo JSON para o novo shapefile criado:
 	</p>
 	<div class="code">
 	<pre style="margin: 0; line-height: 125%"><span style="color: #008000">// create fields (properties) in new layer</span>
@@ -160,7 +160,7 @@ CompressToZipFile(<span style="color: #0000ff">new</span> List&lt;<span style="c
 </pre>
 	</div>
 	
-	<h3 class="subtitle-content">Converter json para shapefile - código completo </h3>
+	<h3 class="subtitle-content">Converter JSON para shapefile - código completo </h3>
 	<div class="code">
 	<pre style="margin: 0; line-height: 125%"><span style="color: #0000ff">new</span> GdalUtilities().convertJsonToShapeFile(<span style="color: #a31515">@&quot;C:\development\example-data.json&quot;</span>, <span style="color: #a31515">@&quot;C:\development\shapefile-out.shp&quot;</span>);</pre>
 	</div>
@@ -285,10 +285,17 @@ CompressToZipFile(<span style="color: #0000ff">new</span> List&lt;<span style="c
 	<p class="content">
 	Você pode baixar o código completo e arquivos de exemplo no nosso <a href="http://github.com/adadevelopment/adadevfiles/blob/master/files/gdal-json-shapefile" target="_blank">repositório no Github</a>.
 	</p>	
-		
+	
+	<h3 class="subtitle-content">Veja mais em:</h3>
+	<p class="content">
+	<a href="https://github.com/OSGeo/gdal/blob/trunk/gdal/swig/csharp/apps/" target="_blank">Exemplos de código</a>
+	</p>
+	<p class="content">
+	<a href="http://www.gdal.org/index_br.html" target="_blank">Gdal</a>
+	</p>
 </div>
 
-<footer>&copy 2017 Todos direitos reservados. <a href:"mailto:adadevsite@gmail.com" />adadevsite@gmail.com</a></footer>
+<footer>&copy 2017 Todos direitos reservados. <a href="mailto:adadevsite@gmail.com">adadevsite@gmail.com</a></footer>
 
 </body>
 </html>

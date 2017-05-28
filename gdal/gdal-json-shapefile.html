@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Json to shapefile Gdal</title>
+    <title>JSON to shapefile Gdal</title>
 	<link rel="icon" type="image/png" href="../images/favicon.ico"/>
     <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
 	<meta http-equiv="content-language" content="en">
@@ -16,7 +16,7 @@
 <div class="content-head">
 	<div class="inside-content-head">
 		<h2 class="title">Adadev</h2>
-		<h1 class="subtitle">Convert json to shapefile using Gdal in C#</h1>
+		<h1 class="subtitle">Convert JSON to shapefile using Gdal in C#</h1>
 	</div>
 </div>
 <div class="home-button"><a href="../index.html">Adadev Home</a></div>
@@ -27,8 +27,8 @@
 <div class="div-content">
 	<div class="date-content">May 27, 2017</div>
 	<p class="content">
-	In this article I explain how to convert a json file to shapefile using Gdal library in C#. 
-	The following is an example of a valid Json file (you can also download <a href="http://github.com/adadevelopment/adadevfiles/blob/master/files/gdal-json-shapefile/example-data.json" target="_blank">the complete file</a>): 
+	In this article I explain how to convert a JSON file to shapefile using Gdal library in C#. 
+	The following is an example of a valid JSON file (you can also download <a href="http://github.com/adadevelopment/adadevfiles/blob/master/files/gdal-json-shapefile/example-data.json" target="_blank">the complete file</a>): 
 	</p>
 	<div class="code">
   <pre style="margin: 0; line-height: 125%">{
@@ -93,7 +93,7 @@
 	</div>
 	<h3 class="subtitle-content">Open Json file with Gdal</h3>
 	<p class="content">
-	The following is the code to open the json file with Gdal and get its layer:
+	The following is the code to open the JSON file with Gdal and get its layer:
 	</p>
 	<div class="code">
 	<pre style="margin: 0; line-height: 125%">Driver jsonFileDriver = Ogr.GetDriverByName(<span style="color: #a31515">&quot;GeoJSON&quot;</span>);
@@ -287,10 +287,17 @@ CompressToZipFile(<span style="color: #0000ff">new</span> List&lt;<span style="c
 	<p class="content">
 	You can download the complete code and example files in our <a href="http://github.com/adadevelopment/adadevfiles/blob/master/files/gdal-json-shapefile" target="_blank">repository on Github</a>.
 	</p>	
-		
+	
+	<h3 class="subtitle-content">See more:</h3>
+	<p class="content">
+	<a href="https://github.com/OSGeo/gdal/blob/trunk/gdal/swig/csharp/apps/" target="_blank">Code Examples</a>
+	</p>
+	<p class="content">
+	<a href="http://www.gdal.org" target="_blank">Gdal</a>
+	</p>
 </div>
 
-<footer>&copy 2017 All rights reserved. <a href="mailto:adadevsite@gmail.com" />adadevsite@gmail.com</a></footer>
+<footer>&copy 2017 All rights reserved. <a href="mailto:adadevsite@gmail.com">adadevsite@gmail.com</a></footer>
 
 </body>
 </html>
