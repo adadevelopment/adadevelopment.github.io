@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Commitar unversioned TortoiseSVN</title>
+	<link rel="icon" type="image/png" href="../../images/favicon.ico"/>
+    <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="content-language" content="pt-br">
+	<meta name="author" content="Tamara Mendes">
+	<meta name="reply-to" content="adadevsite@gmail">
+	<meta name="keywords" content="tortoisesvn, não versionados, ignorar arquivos não versionados, commit">
+	<link rel="stylesheet" href="../../style/style.css">
+	<link rel="stylesheet" href="../../style/style-topic.css">
+</head>
+<body>
+
+<div class="content-head">
+	<div class="inside-content-head">
+		<h2 class="title">Adadev</h2>
+		<h1 class="subtitle">Commitar arquivos não versionados com o TortoiseSVN </h1>
+	</div>
+</div>
+<div class="home-button"><a href="../index.html">Adadev Home</a></div>
+<div class="internationalization"><a href="../../other/tortoise-unversioned.html">[English]</a></div>
+
+<div class="div-content">
+	<div class="date-content">02 de Junho de 2017</div>
+	<p class="content">
+	O TortoiseSVN é uma ferramenta que oferece uma interface para gerenciar o SVN. Ao commitar novos arquivos (não versionados), em geral você precisa apenas selecionar a opção "Show unversioned files" no canto inferior esquerdo da tela.
+	</p>	
+	
+	<img src="../../images/comit-tortoise.png" alt="Commit TortoiseSVN">
+	
+	<p class="content">
+	No entanto, quando comecei a trabalhar em um projeto em C#, os arquivos não versionados não apareciam. Logo, era preciso localizar o arquivo, clicar com o botão direito e ir em TortoiseSVN / Add para que o arquivo fosse adicionado e listado na tela de commit. Uma tarefa trabalhosa e sujeita a erros. Várias vezes novos arquivos não eram commitados causando erros de compilação. 
+	</p>
+	
+	<h3 class="subtitle-content">Configurando o TortoiseSNV para exibir arquivos não versionados</h3>
+	<p class="content">
+	Para o SNV ignorar ou não os novos arquivos automaticamente, é possível configurar, por pasta, quais arquivos serão ignorados. Na raiz do projeto, clique com o botão direito e vá em TortoiseSVN / Properties. Dê um duplo clique na propriedade <strong>svn:global-ignores</strong>. Se seu valor for <strong>*</strong> o SVN ignora todos os novos aquivos.
+	</p>
+	<p class="content">
+	Alguns arquivos realmente não devem ser commitados, como aqueles gerados na compilação. Você pode adicionar apenas aqueles que deseja-se ignorar, por exemplo: packages, bin, obj. Adicionando cada um em uma linha. Você pode também selecionar "Apply property recursively" para modificar todas as suas subpastas. Agora é só Commitar as alterações.
+	</p>
+	
+	<img src="../../images/svn-ignore.png" alt="Ignorar arquivos não versionados com TortoiseSVN">
+	
+	<h3 class="subtitle-content">Veja mais em:</h3>
+	<p class="content">
+	<a href="https://tortoisesvn.net/docs/release/TortoiseSVN_en/tsvn-dug-ignore.html" target="_blank">TortoiseSVN</a>
+	</p>
+</div>
+
+<footer>&copy 2017 Todos direitos reservados. <a href="mailto:adadevsite@gmail.com">adadevsite@gmail.com</a></footer>
+
+</body>
+</html>
