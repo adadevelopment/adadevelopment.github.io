@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Comit unversioned TortoiseSVN</title>
+	<link rel="icon" type="image/png" href="../images/favicon.ico"/>
+    <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="content-language" content="en">
+	<meta name="author" content="Tamara Mendes">
+	<meta name="reply-to" content="adadevsite@gmail">
+	<meta name="keywords" content="tortoisesvn, unversioned, ignore unversioned, commit">
+	<link rel="stylesheet" href="../style/style.css">
+	<link rel="stylesheet" href="../style/style-topic.css">
+</head>
+<body>
+
+<div class="content-head">
+	<div class="inside-content-head">
+		<h2 class="title">Adadev</h2>
+		<h1 class="subtitle">Commit unversioned files with TortoiseSVN</h1>
+	</div>
+</div>
+<div class="home-button"><a href="../index.html">Adadev Home</a></div>
+<div class="internationalization"><a href="../pt/other/tortoise-unversioned.html">[Português]</a></div>
+
+<div class="div-content">
+	<div class="date-content">June 2, 2017</div>
+	<p class="content">
+	TortoiseSVN is a graphical tool to manager SVN. When you commit new files (unversioned), normally, you just have to select the "Show unversioned files" option in left bottom corner of the screen.
+	</p>	
+	
+	<img src="../images/comit-tortoise.png" alt="Commit TortoiseSVN">
+	
+	<p class="content">
+	However, when I start working on a C# project, the unversioned files were not showed. So, I had to locate the file, right click, go to TortoiseSVN / Add to add the file and then, it was listed on commit screen. It is a hard task and it can easily cause errors. Many times new files were not committed and it caused compilation errors.
+	</p>
+	
+	<h3 class="subtitle-content">Configuring TortoiseSNV to show unversioned files</h3>
+	<p class="content">
+	It is possible configure SVN to ignore or not new files automatically. You can choice by folder which files will be ignored. On project root, right click and go to TortoiseSVN / Properties. Double click on <strong>svn:global-ignores</strong> property. If its value is <strong>*</strong> SVN ignores all new files.
+	</p>
+	<p class="content">
+	Indeed, we do not have to commit some files, like those generated on compilation. You can add just the files you wish to ignore, for example: packages, bin, obj. You have to add each one in each line. You can also select "Apply property recursively" to modify all the subfolders. Now, you just have to commit the modifications.
+	</p>
+	
+	<img src="../images/svn-ignore.png" alt="Ignore unversioned files with TortoiseSVN">
+	
+	<h3 class="subtitle-content">See more:</h3>
+	<p class="content">
+	<a href="https://tortoisesvn.net/docs/release/TortoiseSVN_en/tsvn-dug-ignore.html" target="_blank">TortoiseSVN</a>
+	</p>
+	
+</div>
+
+<footer>&copy 2017 All rights reserved. <a href="mailto:adadevsite@gmail.com">adadevsite@gmail.com</a></footer>
+
+</body>
+</html>
