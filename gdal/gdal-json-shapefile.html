@@ -8,6 +8,7 @@
 	<meta name="author" content="Tamara Mendes">
 	<meta name="reply-to" content="adadevsite@gmail">
 	<meta name="keywords" content="gdal, json, shapefile, c#">
+	<meta name="description" content="How to convert a file in JSON format to shapefile and zip the files using Gdal in C#"> 
 	<link rel="stylesheet" href="../style/style.css">
 	<link rel="stylesheet" href="../style/style-topic.css">
 </head>
@@ -16,7 +17,7 @@
 <div class="content-head">
 	<div class="inside-content-head">
 		<h2 class="title">Adadev</h2>
-		<h1 class="subtitle">Convert JSON to shapefile using Gdal in C#</h1>
+		<h1 class="subtitle">Converting JSON to shapefile using Gdal in C#</h1>
 	</div>
 </div>
 <div class="home-button"><a href="../index.html">Adadev Home</a></div>
@@ -66,7 +67,7 @@
 	<p class="content">
 	Let's go to the steps:
 	</p>
-	<h3 class="subtitle-content">Import Gdal from Visual Studio</h3>
+	<h3 class="subtitle-content">Importing Gdal from Visual Studio</h3>
 	<p class="content">
 	Firstly, we have to import Gdal to the project: in Visual Studio, right click on project, go to "Manage NuGet packages", type "Gdal" on search field, select Gdal (1.11.1 is the last version available at the time of writing) and install it. Also select and install Gdal.Native (the project compile without it but it does not execute correctly). The "GdalConfiguration.cs" class is created automatically. It is used before start the conversion method.
 	</p>
@@ -91,7 +92,7 @@
     GdalConfiguration.ConfigureOgr();
 }</pre>
 	</div>
-	<h3 class="subtitle-content">Open Json file with Gdal</h3>
+	<h3 class="subtitle-content">Opening Json file with Gdal</h3>
 	<p class="content">
 	The following is the code to open the JSON file with Gdal and get its layer:
 	</p>
@@ -116,9 +117,9 @@ DataSource shapeFile = esriShapeFileDriver.CreateDataSource(shapeFilePath, <span
 Layer shplayer = shapeFile.CreateLayer(jsonLayer.GetName(), jsonLayer.GetSpatialRef(), jsonLayer.GetGeomType(), <span style="color: #0000ff">new</span> <span style="color: #2b91af">string</span>[] { });</pre>
 	</div>
 	
-	<h3 class="subtitle-content">Copy data and properties of json to shapefile</h3>
+	<h3 class="subtitle-content">Copying data and properties of JSON to shapefile</h3>
 	<p class="content">
-	The following is the code to create and copy the properties e values of each element of json file to new shapefile:
+	The following is the code to create and copy the properties e values of each element of JSON file to new shapefile:
 	</p>
 	<div class="code">
 	<pre style="margin: 0; line-height: 125%"><span style="color: #008000">// create fields (properties) in new layer</span>
@@ -162,7 +163,7 @@ CompressToZipFile(<span style="color: #0000ff">new</span> List&lt;<span style="c
 </pre>
 	</div>
 	
-	<h3 class="subtitle-content">Convert json to shapefile - complete code</h3>
+	<h3 class="subtitle-content">Converting JSON to shapefile - complete code</h3>
 	<div class="code">
 	<pre style="margin: 0; line-height: 125%"><span style="color: #0000ff">new</span> GdalUtilities().convertJsonToShapeFile(<span style="color: #a31515">@&quot;C:\development\example-data.json&quot;</span>, <span style="color: #a31515">@&quot;C:\development\shapefile-out.shp&quot;</span>);</pre>
 	</div>
