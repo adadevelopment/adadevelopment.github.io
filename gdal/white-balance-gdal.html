@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>White Balance Algorithm</title>
+	<link rel="icon" type="image/png" href="../images/favicon.ico"/>
+    <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="content-language" content="en">
+	<meta name="author" content="Tamara Mendes">
+	<meta name="reply-to" content="adadevsite@gmail">
+	<meta name="keywords" content="white balance, gdal, algorithm, code, c#">
+	<meta name="description" content="Coding simple and fast white balance algorithm on TIF images using Gdal in C#">
+	<link rel="stylesheet" href="../style/style.css">
+	<link rel="stylesheet" href="../style/style-topic.css">
+</head>
+<body>
+
+<div class="content-head">
+	<div class="inside-content-head">
+		<h2 class="title">Adadev</h2>
+		<h1 class="subtitle">White Balance Algorithm with Gdal in C#</h1>
+	</div>
+</div>
+<div class="home-button"><a href="../index.html">Adadev Home</a></div>
+<div class="internationalization"><a href="../pt/gdal/white-balance-gdal.html">[Português]</a></div>
+
+<div class="div-content">
+	<div class="date-content">June 6, 2017</div>
+	<p class="content">
+	The white balance is an algorithm that adjust the color intensity of an image. It is used to improve photos with whitish, orange, bluish or greenish tones. In this article, I describe an white balance algorithm based on <a href="https://docs.gimp.org/2.8/en/gimp-layer-white-balance.html" target="_blank">GIMP image editor idea</a>. It is an simple and fast algorithm.
+	</p>
+	
+	<h3 class="subtitle-content">White balance pseudo code</h3>
+	<p class="content">
+	Considering a RGB image in bytes, that is, each pixel varies from 0 to 255, the algorithm is applied on each band separately. The code below should be called for each band in array format. For that, you have to provide the matrix values in sequence, row by row.
+	</p>
+	<div class="code">
+	<pre style="margin: 0; line-height: 125%">WhiteBalanceBand(bandArray) {
+	<span style="color: #008000">// copy the array</span>
+	sortedBandArray = CopyOf(bandArray)
+	<span style="color: #008000">// sort the array</span>
+	sortedBandArray = Sort(sortedBandArray)
+	
+	<span style="color: #008000">// percent (configurable) for balance</span>
+	percentForBalance = 0.6;
+
+	<span style="color: #008000">// calculate the percentile</span>
+	perc05 = Percentile(sortedBandArray, percentForBalance)
+	perc95 = Percentile(sortedBandArray, 100 - percentForBalance)
+
+	bandBalancedArray[bandArray.Length]
+
+	<span style="color: #0000ff">for</span>(i = 0; i &lt; bandArray.length; i++) {
+		<span style="color: #008000">// calculate balanced value</span>
+		valueBalanced = (bandArray[i] - perc05) * 255.0 / (perc95 - perc05);
+		<span style="color: #008000">// limit values between 0 and 255</span>
+		bandBalancedArray[i] = LimitToByte(valueBalanced);
+	}
+
+	<span style="color: #0000ff">return</span> bandBalancedArray;
+}
+</pre>
+	</div>
+	
+	<p class="content">
+	To calculate percentile:
+	</p>
+	<div class="code">
+	<pre style="margin: 0; line-height: 125%">Percentile(array,  percentile) {
+	nArray = array.Length
+	nPercent = (nArray + 1) * percentile / 100
+	<span style="color: #0000ff">if</span>(nPercent == 1) {
+		<span style="color: #0000ff">return</span> array[0];
+	} <span style="color: #0000ff">else</span> <span style="color: #0000ff">if</span>(nPercent == nArray) {
+		<span style="color: #0000ff">return</span> array[nArray - 1]
+	} <span style="color: #0000ff">else</span> {
+		intNPercent = (<span style="color: #2b91af">int</span>)nPercent
+		d = nPercent - intNPercent
+		<span style="color: #0000ff">return</span> array[intNPercent - 1] + d * (array[intNPercent] - array[intNPercent - 1])
+	}
+}
+</pre></div>
+
+<p class="content">
+	To limit the values between 0 and 255:
+	</p>
+	<div class="code">
+	<pre style="margin: 0; line-height: 125%">LimitToByte(<span style="color: #0000ff">value</span>) {
+	<span style="color: #0000ff">if</span>(<span style="color: #0000ff">value</span> &lt; 0) {
+		<span style="color: #0000ff">return</span> 0
+	} <span style="color: #0000ff">else</span> <span style="color: #0000ff">if</span>(<span style="color: #0000ff">value</span> &gt; 255) {
+		<span style="color: #0000ff">return</span> 255
+	} 
+	
+	<span style="color: #0000ff">return</span> <span style="color: #0000ff">value</span>
+}
+</pre>
+</div>
+
+<p class="content">
+The images below show the result of applying this algorithm. On the left, the original image without any filters and on the right, the image after applying white balance using the percentile 0.6:
+</p>
+	<img src="../images/original-white-balance.png" alt="Original image without any filters">
+	<img src="../images/white-balance.png" alt="Image after white balance">
+	
+	<p class="content">
+	To implement the white balance, first, let's go to the configurations:
+	</p>
+	<h3 class="subtitle-content">Import Gdal on Visual Studio</h3>
+	<p class="content">
+	Firstly, we have to import Gdal to the project: in Visual Studio, right click on project, go to "Manage NuGet packages", type "Gdal" on search field, select Gdal (1.11.1 is the last version available at the time of writing) and install it. Also select and install Gdal.Native (the project compile without it but it does not execute correctly). The "GdalConfiguration.cs" class is created automatically. It is used before start the conversion method.
+	</p>
+	<p class="content">
+	To import Gdal in your class, use:
+	</p>
+	<div class="code">
+	<pre style="margin: 0; line-height: 125%"><span style="color: #0000ff">using</span> OSGeo.GDAL;</pre>
+	</div>
+	
+	<h3 class="subtitle-content">Configuring Gdal</h3>
+	<p class="content">
+	Before use the Gdal classes, we need to configure it. You just need to call <strong>ConfigureGdal</strong> method of the class <strong><a href="https://github.com/adadevelopment/adadevfiles/blob/master/files/gdal-white-balance/GdalConfiguration.cs" target="_blank">GdalConfiguration.cs</a></strong>. You can call it, for example, in class constructor.
+	</p>
+	<div class="code">
+	<pre style="margin: 0; line-height: 125%"><span style="color: #0000ff">public</span> WhiteBalance() {
+    GdalConfiguration.ConfigureGdal();
+}</pre>
+	</div>
+	<h3 class="subtitle-content">White balance with Gdal in C#</h3>
+	<p class="content">
+	The code below shows the complete implementation of white balance with Gdal, in C#:
+	</p>
+	<div class="code">
+	<pre style="margin: 0; line-height: 125%"><span style="color: #0000ff">new</span> WhiteBalance().AplyWhiteBalance(<span style="color: #a31515">@&quot;C:\development\input-image.tif&quot;</span>, <span style="color: #a31515">@&quot;C:\development\output-image.tif&quot;</span>);</pre>
+	</div>
+	
+	<div class="code">
+	<pre style="margin: 0; line-height: 125%"><span style="color: #0000ff">using</span> OSGeo.GDAL;
+<span style="color: #0000ff">using</span> System;
+
+<span style="color: #0000ff">namespace</span> Adadev.GdalModule {
+
+    <span style="color: #0000ff">public</span> <span style="color: #0000ff">class</span> <span style="color: #2b91af">WhiteBalance</span> {
+
+        <span style="color: #0000ff">private</span> <span style="color: #2b91af">double</span> percentForBalance = 0.6;
+
+        <span style="color: #0000ff">public</span> WhiteBalance() {
+            GdalConfiguration.ConfigureGdal();  
+        }
+
+        <span style="color: #0000ff">public</span> WhiteBalance(<span style="color: #2b91af">double</span> percentForBalance) {
+            <span style="color: #0000ff">this</span>.percentForBalance = percentForBalance;
+            GdalConfiguration.ConfigureGdal();
+        }
+
+        <span style="color: #0000ff">public</span> <span style="color: #0000ff">void</span> AplyWhiteBalance(<span style="color: #2b91af">string</span> imagePath, <span style="color: #2b91af">string</span> outImagePath) {
+
+            using(Dataset image = Gdal.Open(imagePath, Access.GA_ReadOnly)) {
+
+                Band redBand = GdalUtilities.GetBand(image, ColorInterp.GCI_RedBand);
+                Band greenBand = GdalUtilities.GetBand(image, ColorInterp.GCI_GreenBand);
+                Band blueBand = GdalUtilities.GetBand(image, ColorInterp.GCI_BlueBand);
+
+                <span style="color: #0000ff">if</span>(redBand == <span style="color: #0000ff">null</span> || greenBand == <span style="color: #0000ff">null</span> || blueBand == <span style="color: #0000ff">null</span>) {
+                    <span style="color: #0000ff">throw</span> <span style="color: #0000ff">new</span> NullReferenceException(<span style="color: #a31515">&quot;One or more bands are not available.&quot;</span>);
+                }
+
+                <span style="color: #2b91af">int</span> width = redBand.XSize;
+                <span style="color: #2b91af">int</span> height = redBand.YSize;
+
+                using(Dataset outImage = Gdal.GetDriverByName(<span style="color: #a31515">&quot;GTiff&quot;</span>).Create(outImagePath, width, height, 3, DataType.GDT_Byte, <span style="color: #0000ff">null</span>)) {
+
+                    <span style="color: #2b91af">double</span>[] geoTransformerData = <span style="color: #0000ff">new</span> <span style="color: #2b91af">double</span>[6];
+                    image.GetGeoTransform(geoTransformerData);
+                    outImage.SetGeoTransform(geoTransformerData);
+                    outImage.SetProjection(image.GetProjection());
+
+                    Band outRedBand = GdalUtilities.GetBand(outImage, ColorInterp.GCI_RedBand);
+                    Band outGreenBand = GdalUtilities.GetBand(outImage, ColorInterp.GCI_GreenBand);
+                    Band outBlueBand = GdalUtilities.GetBand(outImage, ColorInterp.GCI_BlueBand);
+
+                    <span style="color: #2b91af">int</span>[] red = <span style="color: #0000ff">new</span> <span style="color: #2b91af">int</span>[width * height];
+                    <span style="color: #2b91af">int</span>[] green = <span style="color: #0000ff">new</span> <span style="color: #2b91af">int</span>[width * height];
+                    <span style="color: #2b91af">int</span>[] blue = <span style="color: #0000ff">new</span> <span style="color: #2b91af">int</span>[width * height];
+                    redBand.ReadRaster(0, 0, width, height, red, width, height, 0, 0);
+                    greenBand.ReadRaster(0, 0, width, height, green, width, height, 0, 0);
+                    blueBand.ReadRaster(0, 0, width, height, blue, width, height, 0, 0);
+
+                    <span style="color: #2b91af">int</span>[] outRed = WhiteBalanceBand(red);
+                    <span style="color: #2b91af">int</span>[] outGreen = WhiteBalanceBand(green);
+                    <span style="color: #2b91af">int</span>[] outBlue = WhiteBalanceBand(blue);
+                    outRedBand.WriteRaster(0, 0, width, height, outRed, width, height, 0, 0);
+                    outGreenBand.WriteRaster(0, 0, width, height, outGreen, width, height, 0, 0);
+                    outBlueBand.WriteRaster(0, 0, width, height, outBlue, width, height, 0, 0);
+
+                    outImage.FlushCache();
+                }
+            }
+        }
+
+        <span style="color: #0000ff">public</span> <span style="color: #2b91af">int</span>[] WhiteBalanceBand(<span style="color: #2b91af">int</span>[] band) {
+             <span style="color: #2b91af">int</span>[] sortedBand = <span style="color: #0000ff">new</span> <span style="color: #2b91af">int</span>[band.Length];
+             Array.Copy(band, sortedBand, band.Length);
+             Array.Sort(sortedBand);
+
+             <span style="color: #2b91af">double</span> perc05 = Percentile(sortedBand, percentForBalance);
+             <span style="color: #2b91af">double</span> perc95 = Percentile(sortedBand, 100.0 - percentForBalance);
+
+             <span style="color: #2b91af">int</span>[] bandBalanced = <span style="color: #0000ff">new</span> <span style="color: #2b91af">int</span>[band.Length];
+
+             <span style="color: #0000ff">for</span>(<span style="color: #2b91af">int</span> i = 0; i &lt; band.Length; i++) {
+
+                 <span style="color: #2b91af">double</span> valueBalanced = (band[i] - perc05) * 255.0 / (perc95 - perc05);
+                 bandBalanced[i] = LimitToByte(valueBalanced);
+             }
+
+             <span style="color: #0000ff">return</span> bandBalanced;
+        }
+
+        <span style="color: #0000ff">public</span> <span style="color: #2b91af">double</span> Percentile(<span style="color: #2b91af">int</span>[] sequence, <span style="color: #2b91af">double</span> percentile) {
+            
+            <span style="color: #2b91af">int</span> nSequence = sequence.Length;
+            <span style="color: #2b91af">double</span> nPercent = (nSequence + 1) * percentile / 100d;
+            <span style="color: #0000ff">if</span>(nPercent == 1d) {
+                <span style="color: #0000ff">return</span> sequence[0];
+            } <span style="color: #0000ff">else</span> <span style="color: #0000ff">if</span>(nPercent == nSequence) {
+                <span style="color: #0000ff">return</span> sequence[nSequence - 1];
+            } <span style="color: #0000ff">else</span> {
+                <span style="color: #2b91af">int</span> intNPercent = (<span style="color: #2b91af">int</span>)nPercent;
+                <span style="color: #2b91af">double</span> d = nPercent - intNPercent;
+                <span style="color: #0000ff">return</span> sequence[intNPercent - 1] + d * (sequence[intNPercent] - sequence[intNPercent - 1]);
+            }
+        }
+
+        <span style="color: #0000ff">private</span> <span style="color: #2b91af">byte</span> LimitToByte(<span style="color: #2b91af">double</span> <span style="color: #0000ff">value</span>) {
+            <span style="color: #2b91af">byte</span> newValue;
+
+            <span style="color: #0000ff">if</span>(<span style="color: #0000ff">value</span> &lt; 0) {
+                newValue = 0;
+            } <span style="color: #0000ff">else</span> <span style="color: #0000ff">if</span>(<span style="color: #0000ff">value</span> &gt; 255) {
+                newValue = 255;
+            } <span style="color: #0000ff">else</span> {
+                newValue = (<span style="color: #2b91af">byte</span>)<span style="color: #0000ff">value</span>;
+            }
+ 
+            <span style="color: #0000ff">return</span> newValue;
+        }
+		
+    }
+}
+</pre>
+	</div>
+	<p class="content">
+	You can download the complete code in our <a href="http://github.com/adadevelopment/adadevfiles/tree/master/files/gdal-white-balance" target="_blank">repository on Github</a>.
+	</p>	
+	
+	<h3 class="subtitle-content">See more:</h3>
+	<p class="content">
+	<a href="https://stackoverflow.com/questions/1175393/white-balance-algorithm/37854585#37854585" target="_blank">White balance in Python</a>
+	</p>
+	<p class="content">
+	<a href="https://en.wikipedia.org/wiki/Percentile" target="_blank">Percentile</a>
+	</p>
+	<p class="content">
+	<a href="https://stackoverflow.com/questions/8137391/percentile-calculation/" target="_blank">Percentil algorithm</a>
+	</p>
+
+</div>
+
+<footer>&copy 2017 All rights reserved. <a href="mailto:adadevsite@gmail.com">adadevsite@gmail.com</a></footer>
+
+</body>
+</html>
