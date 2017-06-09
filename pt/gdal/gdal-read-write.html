@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ler e Escrever TIF Gdal </title>
+	<link rel="icon" type="image/png" href="../../images/favicon.ico"/>
+    <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="content-language" content="pt-br">
+	<meta name="author" content="Tamara Mendes">
+	<meta name="reply-to" content="adadevsite@gmail">
+	<meta name="keywords" content="ler, escrever, gdal, c#">
+	<meta name="description" content="Como ler, escrever e criar imagens com informação geográfica, no formato .TIF, com a biblioteca Gdal em C#.">
+	<link rel="stylesheet" href="../../style/style.css">
+	<link rel="stylesheet" href="../../style/style-topic.css">
+</head>
+<body>
+
+<div class="content-head">
+	<div class="inside-content-head">
+		<h2 class="title">Adadev</h2>
+		<h1 class="subtitle"> Ler e Escrever Imagens com o Gdal </h1>
+	</div>
+</div>
+<div class="home-button"><a href="../index.html">Adadev Home</a></div>
+<div class="internationalization"><a href="../../gdal/gdal-read-write.html">[English]</a></div>
+
+<div class="div-content">
+	<div class="date-content">09 de Maio de 2017</div>
+	<p class="content">
+	Neste artigo eu explico como ler  e criar / escrever imagens de satélite e de informações geográficas no formato .TIF com a biblioteca Gdal em C#.
+	</p>	
+	
+	<h3 class="subtitle-content">Importar o Gdal no Visual Studio</h3>
+	<p class="content">
+	Primeiramente, importamos o Gdal para o projeto: no Visual Studio, clique com o botão direito no projeto, vá em "Manage NuGet packages", digite "Gdal" no campo de busca, selecione o Gdal (1.11.1 é a última versão disponível até o momento em que este artigo foi escrito) e instale. Selecione e instale também o Gdal.Native (sem ele o projeto compila mas não executa corretamente). A classe "GdalConfiguration.cs" será criada automaticamente. Ela será usada antes de iniciar o método para conversão.
+	</p>
+	<p class="content">
+	Para importá-lo em sua classe use:
+	</p>
+	<div class="code">
+	<pre style="margin: 0; line-height: 125%"><span style="color: #0000ff">using</span> OSGeo.GDAL;</pre>
+	</div>
+	
+	<h3 class="subtitle-content">Configurar o Gdal</h3>
+	<p class="content">
+	Antes de usar as classes do Gdal, precisamos configurá-lo. Para isso, basta chamar o método <strong>ConfigureGdal</strong> da classe <strong><a href="https://github.com/adadevelopment/adadevfiles/blob/master/files/gdal-read-write/GdalConfiguration.cs" target="_blank">GdalConfiguration.cs</a></strong>. Você pode chamá-lo, por exemplo, no construtor de sua classe.
+	</p>
+	<div class="code">
+	<pre style="margin: 0; line-height: 125%"><span style="color: #0000ff">public</span> WhiteBalance() {
+    GdalConfiguration.ConfigureGdal();
+}</pre>
+	</div>
+	
+	<h3 class="subtitle-content">Abrindo a imagem</h3>
+	<p class="content">
+	Para abrir uma imagem que já existe use o seguinte comando:
+	</p>
+	<div class="code">
+	<pre style="margin: 0; line-height: 125%">Dataset image = Gdal.Open(imagePath, Access.GA_ReadOnly);
+</pre>
+	</div>
+	<p class="content">
+	O ideal é usar um bloco de instrução <i>using</i>, para fechar o objeto adequadamente. Para criar uma nova imagem, você deve fornecer seu tamanho, o número de bandas (para RGB são 3) e o tipo de dado de cada pixel (byte, int16, int32, etc).
+	</p>
+	<div class="code">
+	<pre style="margin: 0; line-height: 125%">Dataset outImage = Gdal.GetDriverByName(<span style="color: #a31515">&quot;GTiff&quot;</span>).Create(outImagePath, width, height, 3, DataType.GDT_Byte, <span style="color: #0000ff">null</span>)
+</pre>
+	</div>
+	
+	<h3 class="subtitle-content">Acessando cada banda</h3>
+	<p class="content">
+	Uma imagem pode ser vista como uma matriz tridimensional. Cada banda é uma matriz e representa uma cor. Numa imagem RGB existem 3 bandas. Se existir uma camada alfa, por exemplo, ela terá 4 bandas.
+	</p>
+	<img src="../../images/rgb.png" alt="Bandas RGB">
+	<p class="content">
+	Cada banda é acessada com o seguinte código:
+	</p>
+	<div class="code">
+	<pre style="margin: 0; line-height: 125%">Band outRedBand = outImage.GetRasterBand(1);
+</pre>
+	</div>
+	
+	<p class="content">
+	Para cada banda podemos acessar sua matriz. Neste exemplo, acessamos cada linha da matriz, copiando os dados para um vetor previamente declarado (int[] red) e depois acessamos cada elemento:
+	</p>
+	<div class="code">
+	<pre style="margin: 0; line-height: 125%"><span style="color: #0000ff">for</span>(<span style="color: #2b91af">int</span> h = 0; h &lt; height; h++) {
+	<span style="color: #2b91af">int</span>[] red = <span style="color: #0000ff">new</span> <span style="color: #2b91af">int</span>[width];
+	
+	redBand.ReadRaster(0, h, width, 1, red, width, 1, 0, 0);
+	
+	<span style="color: #0000ff">for</span>(<span style="color: #2b91af">int</span> w = 0; w &lt; width; w++) {
+		red[w] = red[w] + 1; <span style="color: #008000">// algum processo com cada pixel</span>
+	}
+}
+</pre>
+	</div>
+	<h3 class="subtitle-content">Escrevendo os dados da imagem</h3>
+	<p class="content">
+	Para escrever os dados na imagem, passamos o vetor de pixels para o método:
+	</p>
+	<div class="code">
+	<pre style="margin: 0; line-height: 125%">outRedBand.WriteRaster(0, h, width, 1, red, width, 1, 0, 0);
+</pre>
+	</div>
+	<p class="content">
+	Se você quiser ler ou escrever mais dados de uma vez, e não linha a linha, altere os tamanhos e posições nas funções. Por exemplo, para ler e escrever todos os dados da matriz de uma só vez:
+	</p>
+	<div class="code">
+	<pre style="margin: 0; line-height: 125%"><span style="color: #2b91af">int</span>[] red = <span style="color: #0000ff">new</span> <span style="color: #2b91af">int</span>[width * height];
+redBand.ReadRaster(0, 0, width, height, red, width, height, 0, 0);
+outRedBand.WriteRaster(0, 0, width, height, outRed, width, height, 0, 0);
+</pre>
+	</div>
+	<p class="content">
+	Ao final, salve os dados de escrita:
+	</p>
+	<div class="code">
+	<pre style="margin: 0; line-height: 125%">outImage.FlushCache();
+</pre>
+	</div>
+	<h3 class="subtitle-content">Ler e escrever imagem com o Gdal</h3>
+	<p class="content">
+	O código completo para ler, modificar e escrever imagens .TIF com o Gdal:
+	</p>
+	<div class="code">
+	<pre style="margin: 0; line-height: 125%"><span style="color: #0000ff">new</span> ReadWrite().ReadAndWriteImage(<span style="color: #a31515">@&quot;C:\development\input-image.tif&quot;</span>, <span style="color: #a31515">@&quot;C:\development\output-image.tif&quot;</span>);
+</pre>
+	</div>
+	<div class="code">
+	<pre style="margin: 0; line-height: 125%"><span style="color: #0000ff">using</span> OSGeo.GDAL;
+<span style="color: #0000ff">using</span> System;
+
+<span style="color: #0000ff">namespace</span> Adadev.GdalModule {
+
+    <span style="color: #0000ff">public</span> <span style="color: #0000ff">class</span> <span style="color: #2b91af">ReadWrite</span> {
+
+        <span style="color: #0000ff">public</span> ReadWrite() {
+            GdalConfiguration.ConfigureGdal();
+        }
+
+        <span style="color: #0000ff">public</span> <span style="color: #0000ff">void</span> ReadAndWriteImage(<span style="color: #2b91af">string</span> imagePath, <span style="color: #2b91af">string</span> outImagePath) {
+
+            using(Dataset image = Gdal.Open(imagePath, Access.GA_ReadOnly)) {
+
+                Band redBand = GetBand(image, ColorInterp.GCI_RedBand);
+                Band greenBand = GetBand(image, ColorInterp.GCI_GreenBand);
+                Band blueBand = GetBand(image, ColorInterp.GCI_BlueBand);
+                Band alphaBand = GetBand(image, ColorInterp.GCI_AlphaBand);
+
+                <span style="color: #0000ff">if</span>(redBand == <span style="color: #0000ff">null</span> || greenBand == <span style="color: #0000ff">null</span> || blueBand == <span style="color: #0000ff">null</span> || alphaBand == <span style="color: #0000ff">null</span>) {
+                    <span style="color: #0000ff">throw</span> <span style="color: #0000ff">new</span> NullReferenceException(<span style="color: #a31515">&quot;One or more bands are not available.&quot;</span>);
+                }
+
+                <span style="color: #2b91af">int</span> width = redBand.XSize;
+                <span style="color: #2b91af">int</span> height = redBand.YSize;
+
+                using(Dataset outImage = Gdal.GetDriverByName(<span style="color: #a31515">&quot;GTiff&quot;</span>).Create(outImagePath, width, height, 4, redBand.DataType, <span style="color: #0000ff">null</span>)) {
+                    <span style="color: #008000">// copia a projeção e informações geográficas da imagem</span>
+                    <span style="color: #2b91af">double</span>[] geoTransformerData = <span style="color: #0000ff">new</span> <span style="color: #2b91af">double</span>[6];
+                    image.GetGeoTransform(geoTransformerData);
+                    outImage.SetGeoTransform(geoTransformerData);
+                    outImage.SetProjection(image.GetProjection());
+
+                    Band outRedBand = outImage.GetRasterBand(1);
+                    Band outGreenBand = outImage.GetRasterBand(2);
+                    Band outBlueBand = outImage.GetRasterBand(3);
+                    Band outAlphaBand = outImage.GetRasterBand(4);
+
+                    <span style="color: #0000ff">for</span>(<span style="color: #2b91af">int</span> h = 0; h &lt; height; h++) {
+                        <span style="color: #2b91af">int</span>[] red = <span style="color: #0000ff">new</span> <span style="color: #2b91af">int</span>[width];
+                        <span style="color: #2b91af">int</span>[] green = <span style="color: #0000ff">new</span> <span style="color: #2b91af">int</span>[width];
+                        <span style="color: #2b91af">int</span>[] blue = <span style="color: #0000ff">new</span> <span style="color: #2b91af">int</span>[width];
+                        <span style="color: #2b91af">int</span>[] alpha = <span style="color: #0000ff">new</span> <span style="color: #2b91af">int</span>[width];
+                        <span style="color: #008000">// copia cada linha da matriz da imagem para os vetores definidos acima</span>
+                        redBand.ReadRaster(0, h, width, 1, red, width, 1, 0, 0);
+                        greenBand.ReadRaster(0, h, width, 1, green, width, 1, 0, 0);
+                        blueBand.ReadRaster(0, h, width, 1, blue, width, 1, 0, 0);
+                        alphaBand.ReadRaster(0, h, width, 1, alpha, width, 1, 0, 0);
+
+                        <span style="color: #0000ff">for</span>(<span style="color: #2b91af">int</span> w = 0; w &lt; width; w++) {
+                            red[w] = red[w] + 1; <span style="color: #008000">// algum processo com cada pixel</span>
+                            green[w] = green[w] + 1;
+                            blue[w] = blue[w] + 1;
+                            alpha[w] = alpha[w] + 1;
+                        }
+                        <span style="color: #008000">// escrever imagem</span>
+                        outRedBand.WriteRaster(0, h, width, 1, red, width, 1, 0, 0);
+                        outGreenBand.WriteRaster(0, h, width, 1, green, width, 1, 0, 0);
+                        outBlueBand.WriteRaster(0, h, width, 1, blue, width, 1, 0, 0);
+                        outAlphaBand.WriteRaster(0, h, width, 1, alpha, width, 1, 0, 0);
+                    }
+                    outImage.FlushCache();
+                }
+            }
+        }
+
+      <span style="color: #008000">/**</span>
+<span style="color: #008000">       * Retorna a banda para determinada cor (red, green, blue ou alfa)</span>
+<span style="color: #008000">       * O dataset deve ter 4 bandas</span>
+<span style="color: #008000">       * */</span>
+        <span style="color: #0000ff">public</span> <span style="color: #0000ff">static</span> Band GetBand(Dataset ImageDataSet, ColorInterp colorInterp) {
+            <span style="color: #0000ff">if</span>(colorInterp.Equals(ImageDataSet.GetRasterBand(1).GetRasterColorInterpretation())) {
+                <span style="color: #0000ff">return</span> ImageDataSet.GetRasterBand(1);
+            } <span style="color: #0000ff">else</span> <span style="color: #0000ff">if</span>(colorInterp.Equals(ImageDataSet.GetRasterBand(2).GetRasterColorInterpretation())) {
+                <span style="color: #0000ff">return</span> ImageDataSet.GetRasterBand(2);
+            } <span style="color: #0000ff">else</span> <span style="color: #0000ff">if</span>(colorInterp.Equals(ImageDataSet.GetRasterBand(3).GetRasterColorInterpretation())) {
+                <span style="color: #0000ff">return</span> ImageDataSet.GetRasterBand(3);
+            } <span style="color: #0000ff">else</span> {
+                <span style="color: #0000ff">return</span> ImageDataSet.GetRasterBand(4);
+            }
+        }
+    }
+}
+</pre>
+	</div>
+	
+	<p class="content">
+	Você pode baixar o código completo no nosso <a href="http://github.com/adadevelopment/adadevfiles/tree/master/files/gdal-read-write" target="_blank">repositório no Github</a>.
+	</p>	
+	
+	<h3 class="subtitle-content">Veja mais em:</h3>
+	<p class="content">
+	<a href="https://github.com/OSGeo/gdal/blob/trunk/gdal/swig/csharp/apps/" target="_blank">Exemplos de código</a>
+	</p>
+	<p class="content">
+	<a href="http://www.gdal.org/index_br.html" target="_blank">Gdal</a>
+	</p>
+</div>
+
+<footer>&copy 2017 Todos direitos reservados. <a href="mailto:adadevsite@gmail.com">adadevsite@gmail.com</a></footer>
+
+</body>
+</html>

@@ -156,9 +156,9 @@ The images below show the result of applying this algorithm. On the left, the or
 
             using(Dataset image = Gdal.Open(imagePath, Access.GA_ReadOnly)) {
 
-                Band redBand = GdalUtilities.GetBand(image, ColorInterp.GCI_RedBand);
-                Band greenBand = GdalUtilities.GetBand(image, ColorInterp.GCI_GreenBand);
-                Band blueBand = GdalUtilities.GetBand(image, ColorInterp.GCI_BlueBand);
+                Band redBand = GetBand(image, ColorInterp.GCI_RedBand);
+                Band greenBand = GetBand(image, ColorInterp.GCI_GreenBand);
+                Band blueBand = GetBand(image, ColorInterp.GCI_BlueBand);
 
                 <span style="color: #0000ff">if</span>(redBand == <span style="color: #0000ff">null</span> || greenBand == <span style="color: #0000ff">null</span> || blueBand == <span style="color: #0000ff">null</span>) {
                     <span style="color: #0000ff">throw</span> <span style="color: #0000ff">new</span> NullReferenceException(<span style="color: #a31515">&quot;One or more bands are not available.&quot;</span>);
@@ -174,9 +174,9 @@ The images below show the result of applying this algorithm. On the left, the or
                     outImage.SetGeoTransform(geoTransformerData);
                     outImage.SetProjection(image.GetProjection());
 
-                    Band outRedBand = GdalUtilities.GetBand(outImage, ColorInterp.GCI_RedBand);
-                    Band outGreenBand = GdalUtilities.GetBand(outImage, ColorInterp.GCI_GreenBand);
-                    Band outBlueBand = GdalUtilities.GetBand(outImage, ColorInterp.GCI_BlueBand);
+                    Band outRedBand = outImage.GetRasterBand(1);
+                    Band outGreenBand = outImage.GetRasterBand(2);
+                    Band outBlueBand = outImage.GetRasterBand(3);
 
                     <span style="color: #2b91af">int</span>[] red = <span style="color: #0000ff">new</span> <span style="color: #2b91af">int</span>[width * height];
                     <span style="color: #2b91af">int</span>[] green = <span style="color: #0000ff">new</span> <span style="color: #2b91af">int</span>[width * height];
@@ -244,13 +244,28 @@ The images below show the result of applying this algorithm. On the left, the or
  
             <span style="color: #0000ff">return</span> newValue;
         }
+       <span style="color: #008000">/**</span>
+	<span style="color: #008000"> * Returns the band for an color (red, green, blue or alpha)</span>
+	<span style="color: #008000"> * The dataset should have 4 bands</span>
+	<span style="color: #008000"> * */</span>
+	    <span style="color: #0000ff">public</span> <span style="color: #0000ff">static</span> Band GetBand(Dataset ImageDataSet, ColorInterp colorInterp) {
+            <span style="color: #0000ff">if</span>(colorInterp.Equals(ImageDataSet.GetRasterBand(1).GetRasterColorInterpretation())) {
+                <span style="color: #0000ff">return</span> ImageDataSet.GetRasterBand(1);
+            } <span style="color: #0000ff">else</span> <span style="color: #0000ff">if</span>(colorInterp.Equals(ImageDataSet.GetRasterBand(2).GetRasterColorInterpretation())) {
+                <span style="color: #0000ff">return</span> ImageDataSet.GetRasterBand(2);
+            } <span style="color: #0000ff">else</span> <span style="color: #0000ff">if</span>(colorInterp.Equals(ImageDataSet.GetRasterBand(3).GetRasterColorInterpretation())) {
+                <span style="color: #0000ff">return</span> ImageDataSet.GetRasterBand(3);
+            } <span style="color: #0000ff">else</span> {
+                <span style="color: #0000ff">return</span> ImageDataSet.GetRasterBand(4);
+            }
+        }
 		
     }
 }
 </pre>
 	</div>
 	<p class="content">
-	You can download the complete code in our <a href="http://github.com/adadevelopment/adadevfiles/tree/master/files/gdal-white-balance" target="_blank">repository on Github</a>.
+	You can download the complete code in our <a href="http://github.com/adadevelopment/adadevfiles/tree/master/files/gdal-white-balance" target="_blank">repository on Github</a>. See also more details about <a href="gdal-read-write.html">reading and writting</a> images with Gdal.
 	</p>	
 	
 	<h3 class="subtitle-content">See more:</h3>
