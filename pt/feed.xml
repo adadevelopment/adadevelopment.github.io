@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+    <channel>
+        <title>Novidades Adadev</title>
+        <description>Novidades sobre postagens no site Adadev.</description>
+        <link>https://adadevelopment.github.io/pt/index.html</link>
+        <language>pt-br</language>
+        <lastBuildDate>Fri, 9 Jun 2017 18:00:00 GMT</lastBuildDate>
+        <pubDate>Fri, 9 Jun 2017 16:00:00 GMT</pubDate>
+        <webMaster>adadevsite@gmail.com</webMaster>
+		<item>
+            <title>Ler e Escrever Imagens com o Gdal em C#</title>
+            <description>Como ler, escrever e criar imagens com informação geográfica, no formato .TIF, com a biblioteca Gdal em C#.</description>
+            <link>https://adadevelopment.github.io/pt/gdal/gdal-read-write.html</link>
+            <pubDate>Fri, 9 Jun 2017 16:00:00 GMT</pubDate>
+        </item>
+		<item>
+            <title>Algoritmo Balanço de Branco em C#</title>
+            <description>Implementação de um algoritmo simples e rápido de balanço de branco em imagens TIF usando o Gdal em C#.</description>
+            <link>https://adadevelopment.github.io/pt/gdal/white-balance-gdal.html</link>
+            <pubDate>Tue, 6 Jun 2017 16:00:00 GMT</pubDate>
+        </item>
+		<item>
+            <title>Criar site com o Github Pages e indexar no Google</title>
+            <description>Como hospedar um site gratuitamente no Github Pages e indexar seu conteúdo nas ferramentas de pesquisa do Google.</description>
+            <link>https://adadevelopment.github.io/pt/other/create-site-github-pages.html</link>
+            <pubDate>Sun, 4 Jun 2017 16:00:00 GMT</pubDate>
+        </item>
+		<item>
+            <title>Commitar arquivos não versionados com o TortoiseSVN</title>
+            <description>Configurando o TortoiseSVN para listar arquivos não versionados no commit e não listar arquivos que não devem ser commitados.</description>
+            <link>https://adadevelopment.github.io/pt/other/tortoise-unversioned.html</link>
+            <pubDate>Fri, 2 Jun 2017 16:00:00 GMT</pubDate>
+        </item>
+		<item>
+            <title>JSON para shapefile em C#</title>
+            <description>Como converter um arquivo no formato JSON para o formato shapefile usando o Gdal em C#.</description>
+            <link>https://adadevelopment.github.io/pt/gdal/gdal-json-shapefile.html</link>
+            <pubDate>Sat, 27 May 2017 16:00:00 GMT</pubDate>
+        </item>
+        <item>
+            <title>Ada Lovelace</title>
+            <description>Ada Lovelace foi uma matemática e escritora inglesa reconhecida principalmente por ser a primeira programadora da história.</description>
+            <link>https://adadevelopment.github.io/pt/other/ada-lovelace.html</link>
+            <pubDate>Tue, 23 May 2017 16:00:00 GMT</pubDate>
+        </item>
+    </channel>
+</rss>
