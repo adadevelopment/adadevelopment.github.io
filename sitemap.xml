@@ -1,70 +1,88 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"  xmlns:xhtml="http://www.w3.org/1999/xhtml">
 <url>
   <loc>https://adadevelopment.github.io/</loc>
-  <lastmod>2017-06-09T13:53:03+00:00</lastmod>
-</url>
-<url>
-  <loc>https://adadevelopment.github.io/other/ada-lovelace.html</loc>
-  <lastmod>2017-06-09T13:53:03+00:00</lastmod>
-</url>
-<url>
-  <loc>https://adadevelopment.github.io/pt/index.html</loc>
-  <lastmod>2017-06-09T13:53:03+00:00</lastmod>
-</url>
-<url>
-  <loc>https://adadevelopment.github.io/gdal/gdal.html</loc>
-  <lastmod>2017-06-09T13:53:03+00:00</lastmod>
-</url>
-<url>
-  <loc>https://adadevelopment.github.io/gdal/gdal-read-write.html</loc>
-  <lastmod>2017-06-09T13:53:03+00:00</lastmod>
-</url>
-<url>
-  <loc>https://adadevelopment.github.io/gdal/white-balance-gdal.html</loc>
-  <lastmod>2017-06-09T13:53:03+00:00</lastmod>
-</url>
-<url>
-  <loc>https://adadevelopment.github.io/other/create-site-github-pages.html</loc>
-  <lastmod>2017-06-09T13:53:03+00:00</lastmod>
-</url>
-<url>
-  <loc>https://adadevelopment.github.io/other/tortoise-unversioned.html</loc>
-  <lastmod>2017-06-09T13:53:03+00:00</lastmod>
-</url>
-<url>
-  <loc>https://adadevelopment.github.io/gdal/gdal-json-shapefile.html</loc>
+  <xhtml:link rel="alternate" hreflang="pt" href="https://adadevelopment.github.io/pt" />
   <lastmod>2017-06-09T13:53:03+00:00</lastmod>
 </url>
 <url>
   <loc>https://adadevelopment.github.io/index.html</loc>
+  <xhtml:link rel="alternate" hreflang="pt" href="https://adadevelopment.githubio/pt/index.html" />
+  <lastmod>2017-06-09T13:53:03+00:00</lastmod>
+</url>
+<url>
+  <loc>https://adadevelopment.github.io/other/ada-lovelace.html</loc>
+  <xhtml:link rel="alternate" hreflang="pt" href="https://adadevelopment.github.io/pt/other/ada-lovelace.html" />
+  <lastmod>2017-06-09T13:53:03+00:00</lastmod>
+</url>
+<url>
+  <loc>https://adadevelopment.github.io/gdal/gdal.html</loc>
+  <xhtml:link rel="alternate" hreflang="pt" href="https://adadevelopment.github.io/pt/gdal/gdal.html" />
+  <lastmod>2017-06-09T13:53:03+00:00</lastmod>
+</url>
+<url>
+  <loc>https://adadevelopment.github.io/gdal/gdal-read-write.html</loc>
+  <xhtml:link rel="alternate" hreflang="pt" href="https://adadevelopment.github.io/pt/gdal/gdal-read-write.html" />
+  <lastmod>2017-06-09T13:53:03+00:00</lastmod>
+</url>
+<url>
+  <loc>https://adadevelopment.github.io/gdal/white-balance-gdal.html</loc>
+  <xhtml:link rel="alternate" hreflang="pt" href="https://adadevelopment.github.io/pt/gdal/white-balance-gdal.html" />
+  <lastmod>2017-06-09T13:53:03+00:00</lastmod>
+</url>
+<url>
+  <loc>https://adadevelopment.github.io/other/create-site-github-pages.html</loc>
+  <xhtml:link rel="alternate" hreflang="pt" href="https://adadevelopment.github.io/pt/other/create-site-github-pages.html" />
+  <lastmod>2017-06-09T13:53:03+00:00</lastmod>
+</url>
+<url>
+  <loc>https://adadevelopment.github.io/other/tortoise-unversioned.html</loc>
+  <xhtml:link rel="alternate" hreflang="pt" href="https://adadevelopment.github.io/pt/other/tortoise-unversioned.html" />
+  <lastmod>2017-06-09T13:53:03+00:00</lastmod>
+</url>
+<url>
+  <loc>https://adadevelopment.github.io/gdal/gdal-json-shapefile.html</loc>
+  <xhtml:link rel="alternate" hreflang="pt" href="https://adadevelopment.github.io/pt/gdal/gdal-json-shapefile.html" />
+  <lastmod>2017-06-09T13:53:03+00:00</lastmod>
+</url>
+<url>
+  <loc>https://adadevelopment.github.io/pt/index.html</loc>
+  <xhtml:link rel="alternate" hreflang="en" href="https://adadevelopment.github.io/index.html" />
   <lastmod>2017-06-09T13:53:03+00:00</lastmod>
 </url>
 <url>
   <loc>https://adadevelopment.github.io/pt/other/ada-lovelace.html</loc>
+  <xhtml:link rel="alternate" hreflang="en" href="https://adadevelopment.github.io/other/ada-lovelace.html" />
   <lastmod>2017-06-09T13:53:03+00:00</lastmod>
 </url>
 <url>
   <loc>https://adadevelopment.github.io/pt/gdal/gdal.html</loc>
+  <xhtml:link rel="alternate" hreflang="en" href="https://adadevelopment.github.io/gdal/gdal.html" />
   <lastmod>2017-06-09T13:53:03+00:00</lastmod>
 </url>
 <url>
   <loc>https://adadevelopment.github.io/pt/gdal/gdal-read-write.html</loc>
+  <xhtml:link rel="alternate" hreflang="en" href="https://adadevelopment.github.io/gdal/gdal-read-write.html" />
   <lastmod>2017-06-09T13:53:03+00:00</lastmod>
 </url>
 <url>
   <loc>https://adadevelopment.github.io/pt/gdal/white-balance-gdal.html</loc>
+  <xhtml:link rel="alternate" hreflang="en" href="https://adadevelopment.github.io/gdal/white-balance-gdal.html" />
   <lastmod>2017-06-09T13:53:03+00:00</lastmod>
 </url>
 <url>
   <loc>https://adadevelopment.github.io/pt/other/create-site-github-pages.html</loc>
+  <xhtml:link rel="alternate" hreflang="en" href="https://adadevelopment.github.io/other/create-site-github-pages.html" />
   <lastmod>2017-06-09T13:53:03+00:00</lastmod>
 </url>
 <url>
   <loc>https://adadevelopment.github.io/pt/other/tortoise-unversioned.html</loc>
+  <xhtml:link rel="alternate" hreflang="en" href="https://adadevelopment.github.io/other/tortoise-unversioned.html" />
   <lastmod>2017-06-09T13:53:03+00:00</lastmod>
 </url>
 <url>
   <loc>https://adadevelopment.github.io/pt/gdal/gdal-json-shapefile.html</loc>
+  <xhtml:link rel="alternate" hreflang="en" href="https://adadevelopment.github.io/gdal/gdal-json-shapefile.html" />
   <lastmod>2017-06-09T13:53:03+00:00</lastmod>
 </url>
 </urlset>
