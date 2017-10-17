@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Web API Token Authentication C#</title>
+	<link rel="icon" type="image/png" href="../images/favicon.ico"/>
+    <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="content-language" content="en">
+	<meta name="author" content="Tamara Mendes">
+	<meta name="reply-to" content="adadevsite@gmail">
+	<meta name="keywords" content="authentication, windows authentication, token, web api, c#, security, ajax, customized authentication rules">
+	<meta name="description" content="Security implementation for Web API systems in C#, Token based, using windows authentication and customized authentication rules">
+	<link rel="alternate" hreflang="pt" href="../pt/other/windows-authentication-webapi.html" />	
+	<link rel="stylesheet" href="../style/style.css">
+	<link rel="stylesheet" href="../style/style-topic.css">
+</head>
+<body>
+
+<div class="content-head">
+	<div class="inside-content-head">
+		<h2 class="title">Adadev</h2>
+		<h1 class="subtitle">Windows Authentication in Web API using Token in C#</h1>
+	</div>
+</div>
+<div class="home-button"><a href="../index.html">Adadev Home</a></div>
+<div class="internationalization"><a href="../pt/other/windows-authentication-webapi.html">[Português]</a></div>
+
+<div class="div-content">
+	<div class="date-content">October 17, 2017</div>
+	
+	<p class="content">
+	This article explains the steps to apply security on web API systems in C#. We use Token based authentication and windows authentication for login. So, we use Microsoft Owin library.
+	</p>	
+	<p class="content">
+	The client (web application on browser) request to server a security token according to the session and the logged user (in this tutorial, the windows user). We have to send the token on each API request header. Each API method has an authorization configuration. This method executes and returns correctly only if the token user has all necessary accesses. If the user does not have access or the token is not in request header, the request returns an anthentication error.
+	</p>
+	
+	<h3 class="subtitle-content">Importing packages in Visual Studio</h3>
+	<p class="content">
+	First, we import the necessary packages to the project: Microsoft.Owin.Security.OAuth and Microsoft.Owin.Host.SystemWeb.
+	</p>
+	<p class="content">
+	In Visual Studio, right click on project, go to "Manage NuGet packages", type "Microsoft.Owin.Security.OAuth" in field search, select the last version and install. Do the same to Microsoft.Owin.Host.SystemWeb.
+	</p>
+	
+	<h3 class="subtitle-content">Classes Structure</h3>
+	<p class="content">	
+- <strong>YourAPIProject</strong> <br/>
+--- <strong>App_Start</strong> <br/>
+------ <strong>Startup.Auth.cs</strong>: Token generation configurations<br/>
+--- <strong>Providers</strong> <br/>
+------ <strong>ActiveDirectoryOAuthProvider.cs</strong>: defines business rules for authentication<br/>
+------ <strong>RestrictionsRules.cs</strong>: defines customized access rules for user profiles<br/>
+--- <strong>Global.asax</strong>: enables CORs and authentication headers<br/>
+--- <strong>Startup.cs</strong>: calls Startup.Auth.cs<br/>
+--- <strong>Web.config</strong>: windows authentication configuration<br/>
+</p>
+	
+	<h3 class="subtitle-content">Startup</h3>
+	<p class="content">	
+	The following code shows the implementation of Startup.cs class:
+	</p>
+
+	<div class="code">
+	<pre style="margin: 0; line-height: 125%"><span style="color: #0000ff">using</span> Microsoft.Owin;
+<span style="color: #0000ff">using</span> Owin;
+
+[assembly: OwinStartup(typeof(Adadev.Security.Startup))]
+<span style="color: #0000ff">namespace</span> Adadev.Security {
+    <span style="color: #0000ff">public</span> <span style="color: #0000ff">partial</span> <span style="color: #0000ff">class</span> <span style="color: #2b91af">Startup</span> {
+
+        <span style="color: #0000ff">public</span> <span style="color: #0000ff">void</span> Configuration(IAppBuilder app) {
+            ConfigureAuth(app);
+        }
+
+    }
+}
+</pre>
+	</div>
+	
+	<p class="content">	
+	The following code shows the implementation of Startup.Auth.cs class. The configuration "TokenEndpointPath" is the path to the token request. "AccessTokenExpireTimeSpan"is the token expiration time.
+	</p>
+	
+	<div class="code">
+	<pre style="margin: 0; line-height: 125%"><span style="color: #0000ff">using</span> Microsoft.Owin;
+<span style="color: #0000ff">using</span> Microsoft.Owin.Security.OAuth;
+<span style="color: #0000ff">using</span> Owin;
+<span style="color: #0000ff">using</span> System;
+<span style="color: #0000ff">using</span> Adadev.Security.Providers;
+
+<span style="color: #0000ff">namespace</span> Adadev.Security  {
+    <span style="color: #0000ff">public</span> <span style="color: #0000ff">partial</span> <span style="color: #0000ff">class</span> <span style="color: #2b91af">Startup</span> {
+
+        <span style="color: #0000ff">public</span> <span style="color: #0000ff">void</span> ConfigureAuth(IAppBuilder app) {
+
+            <span style="color: #2b91af">string</span> user = System.Web.HttpContext.Current.User?.Identity?.Name;  
+
+            <span style="color: #008000">// To use the &quot;Authorization&quot; Header on requests</span>
+            app.UseOAuthBearerAuthentication(<span style="color: #0000ff">new</span> OAuthBearerAuthenticationOptions());
+
+            <span style="color: #008000">// Active the method to generate the OAuth Token</span>
+            app.UseOAuthAuthorizationServer(<span style="color: #0000ff">new</span> OAuthAuthorizationServerOptions() {
+                TokenEndpointPath = <span style="color: #0000ff">new</span> PathString(<span style="color: #a31515">&quot;/Token&quot;</span>),
+                Provider = <span style="color: #0000ff">new</span> ActiveDirectoryOAuthProvider(),
+                AccessTokenExpireTimeSpan = TimeSpan.FromDays(1),
+                AllowInsecureHttp = <span style="color: #0000ff">true</span>
+            });
+        }
+    }
+}
+</pre>
+	</div>
+	
+	<h3 class="subtitle-content">Enable CORs (Cross-Origin) e Headers</h3>
+	<p class="content">	
+	To avoid problems with cross-origin requests (from differents servers) and problems with authorization headers, we have to enable <strong>CORs</strong> and others header permissions, inclusive the <strong>Authorization</strong> header used to send the access token. We write it in Global.asax.
+	</p>
+	<div class="code">
+	<pre style="margin: 0; line-height: 125%"><span style="color: #0000ff">using</span> System;
+<span style="color: #0000ff">using</span> System.Web.Http;
+
+<span style="color: #0000ff">namespace</span> Adadev.Security
+{
+    <span style="color: #0000ff">public</span> <span style="color: #0000ff">class</span> <span style="color: #2b91af">MvcApplication</span> : System.Web.HttpApplication
+    {
+        <span style="color: #0000ff">protected</span> <span style="color: #0000ff">void</span> Application_Start()
+        {            
+            GlobalConfiguration.Configure(WebApiConfig.Register);
+        }
+
+        <span style="color: #0000ff">protected</span> <span style="color: #0000ff">void</span> Application_BeginRequest(<span style="color: #2b91af">object</span> sender, EventArgs e)
+        {
+            <span style="color: #2b91af">var</span> origin = Context.Request.Headers[<span style="color: #a31515">&quot;Origin&quot;</span>];
+            <span style="color: #0000ff">if</span> (<span style="color: #2b91af">string</span>.IsNullOrWhiteSpace(origin))
+                origin = <span style="color: #a31515">&quot;*&quot;</span>;
+
+            Context.Response.AddHeader(<span style="color: #a31515">&quot;Access-Control-Allow-Origin&quot;</span>, origin);
+            Context.Response.AddHeader(<span style="color: #a31515">&quot;Access-Control-Allow-Credentials&quot;</span>, <span style="color: #a31515">&quot;true&quot;</span>);
+            Context.Response.AddHeader(<span style="color: #a31515">&quot;Access-Control-Allow-Methods&quot;</span>, <span style="color: #a31515">&quot;GET,HEAD,OPTIONS,POST,PUT,DELETE&quot;</span>);
+            Context.Response.AddHeader(<span style="color: #a31515">&quot;Access-Control-Allow-Headers&quot;</span>, <span style="color: #a31515">&quot;Access-Control-Allow-Headers, Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers, Access-Control-Allow-Credentials, Authorization&quot;</span>);
+            
+            <span style="color: #0000ff">if</span> (Context.Request.HttpMethod != <span style="color: #a31515">&quot;OPTIONS&quot;</span>)
+                <span style="color: #0000ff">return</span>;
+
+            Context.Response.End();
+        }
+    }
+}
+</pre>
+	</div>
+	
+	<h3 class="subtitle-content">Authentication rules</h3>
+	<p class="content">	
+	We define the authentication rules in ActiveDirectoryOAuthProvider.cs class, that is, it is responsible for checking the user, password and if the user has access to the system. On the following example, we only check if the windows user is logged. You can insert your own rule in the method <strong>isUserAuthenticated</strong>, for example, checking if the user has some permission persisted on database.
+	</p>
+	<div class="code">
+	<pre style="margin: 0; line-height: 125%"><span style="color: #0000ff">using</span> Microsoft.Owin.Security.OAuth;
+<span style="color: #0000ff">using</span> System.Security.Claims;
+<span style="color: #0000ff">using</span> System.Threading.Tasks;
+
+<span style="color: #0000ff">namespace</span> Adadev.Security.Providers {
+
+    <span style="color: #0000ff">public</span> <span style="color: #0000ff">class</span> <span style="color: #2b91af">ActiveDirectoryOAuthProvider</span> : OAuthAuthorizationServerProvider {
+
+        <span style="color: #0000ff">public</span> <span style="color: #0000ff">override</span> Task ValidateClientAuthentication(OAuthValidateClientAuthenticationContext c) {
+            c.Validated();
+
+            <span style="color: #0000ff">return</span> Task.FromResult&lt;<span style="color: #2b91af">object</span>&gt;(<span style="color: #0000ff">null</span>);
+        }
+
+        <span style="color: #0000ff">public</span> <span style="color: #0000ff">override</span> Task GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext c) {
+            <span style="color: #0000ff">if</span>(isUserAuthenticated()) {
+                Claim claim1 = <span style="color: #0000ff">new</span> Claim(ClaimTypes.Name, System.Web.HttpContext.Current.User.Identity.Name);
+                Claim[] claims = <span style="color: #0000ff">new</span> Claim[] { claim1 };
+                ClaimsIdentity claimsIdentity = <span style="color: #0000ff">new</span> ClaimsIdentity(claims, OAuthDefaults.AuthenticationType);
+                c.Validated(claimsIdentity);
+            }
+
+            <span style="color: #0000ff">return</span> Task.FromResult&lt;<span style="color: #2b91af">object</span>&gt;(<span style="color: #0000ff">null</span>);
+        }
+
+        <span style="color: #0000ff">public</span> <span style="color: #0000ff">static</span> <span style="color: #2b91af">bool</span> isUserAuthenticated() {
+            <span style="color: #0000ff">if</span>(System.Web.HttpContext.Current.User != <span style="color: #0000ff">null</span>) {
+                <span style="color: #2b91af">bool</span> isAuthenticated = System.Web.HttpContext.Current.User.Identity.IsAuthenticated;
+                <span style="color: #2b91af">string</span> userName = System.Web.HttpContext.Current.User.Identity.Name;
+                <span style="color: #008000">// use your business rule here (consulting database, etc)</span>
+                <span style="color: #0000ff">if</span>(isAuthenticated){ 
+                    <span style="color: #0000ff">return</span> <span style="color: #0000ff">true</span>;
+                }
+            }
+            <span style="color: #0000ff">return</span> <span style="color: #0000ff">false</span>;
+        }
+    }
+}
+</pre>
+	</div>
+		
+	<h3 class="subtitle-content">Access Control</h3>
+	<p class="content">	
+	In general, the access control is done by using the [Authorize] atribute above the API method defining the Windows configured roles and users.
+	In the below example, only the users <i>user1</i> e <i>user2</i> have access to the method <i>GetInfo</i>: 
+	</p>
+	<div class="code">
+<pre style="margin: 0; line-height: 125%">[Authorize(Users = @&quot;domain\user1, domain\user2 &quot;)]
+[HttpGet]
+<span style="color: #0000ff">public</span> HttpResponseMessage GetInfo() {
+   <span style="color: #0000ff">return</span> Request.CreateResponse(HttpStatusCode.OK, <span style="color: #0000ff">new</span> { Content = <span style="border: 1px solid #FF0000">$</span><span style="color: #a31515">&quot;Logged user: &quot;</span> + User?.Identity?.Name });
+}
+</pre>
+	</div>
+	<p class="content">	
+	In this article, we show how to customize this access control, anyway you prefer, like in the case we control using database rules (user, profile, accesses selected in tables). The code below is in the class <strong>RestrictionsRules.cs</strong>. The customization <strong>Basic</strong> only verify if the user is authenticated (this verification is implemented in the class ActiveDirectoryOAuthProvider):
+	</p>
+	<div class="code">
+<pre style="margin: 0; line-height: 125%"><span style="color: #0000ff">using</span> System.Web.Http;
+<span style="color: #0000ff">using</span> System.Web.Http.Controllers;
+<span style="color: #0000ff">using</span> System;
+
+<span style="color: #0000ff">namespace</span> Adadev.Security.Providers {
+
+    <span style="color: #0000ff">public</span> <span style="color: #0000ff">class</span> <span style="color: #2b91af">Basic</span> : AuthorizeAttribute {
+        <span style="color: #0000ff">protected</span> <span style="color: #0000ff">override</span> <span style="color: #2b91af">bool</span> IsAuthorized(HttpActionContext actionContext) {
+            <span style="color: #0000ff">return</span> ActiveDirectoryOAuthProvider.isUserAuthenticated();
+        }
+    }
+}
+</pre>
+	</div>
+	
+	<p class="content">	
+	The customization is used in the API method as follows:
+	</p>
+	<div class="code">
+<pre style="margin: 0; line-height: 125%">[Basic]
+[HttpGet]
+<span style="color: #0000ff">public</span> HttpResponseMessage GetInfo() {
+   <span style="color: #0000ff">return</span> Request.CreateResponse(HttpStatusCode.OK, <span style="color: #0000ff">new</span> { Content = <span style="border: 1px solid #FF0000">$</span><span style="color: #a31515">&quot;Logged user: &quot;</span> + User?.Identity?.Name });
+}
+</pre>
+	</div>
+	
+	<p class="content">	
+	What if I want to authorize each API method according with the pre-configured accesses? We write the access codes in an Enum and write one more class in  <strong>RestrictionsRules.cs</strong>:
+	</p>
+	<div class="code">
+<pre style="margin: 0; line-height: 125%"><span style="color: #0000ff">using</span> System.Web.Http;
+<span style="color: #0000ff">using</span> System.Web.Http.Controllers;
+<span style="color: #0000ff">using</span> System.Linq;
+<span style="color: #0000ff">using</span> System;
+
+<span style="color: #0000ff">namespace</span> Adadev.Security.Providers {
+
+    <span style="color: #0000ff">public</span> <span style="color: #0000ff">class</span> <span style="color: #2b91af">CustomAuthorize</span> : AuthorizeAttribute {
+
+        <span style="color: #0000ff">private</span> <span style="color: #2b91af">string</span>[] accesses;
+
+        <span style="color: #0000ff">public</span> CustomAuthorize(<span style="color: #0000ff">params</span> <span style="color: #2b91af">object</span>[] accessRequired) {
+            <span style="color: #0000ff">if</span>(!(accessRequired.Any(p =&gt; p.GetType().BaseType != <span style="color: #0000ff">typeof</span>(Enum)))) {<span style="color: #008000">// Enum withe the accesses codes</span>
+		<span style="color: #008000">// required accesses list for some method (the list we added in API method signature)</span>
+		<span style="color: #0000ff">this</span>.accesses = accessRequired.Select(a =&gt; Enum.GetName(a.GetType(), a)).ToArray();
+            }
+        }
+
+        <span style="color: #0000ff">protected</span> <span style="color: #0000ff">override</span> <span style="color: #2b91af">bool</span> IsAuthorized(HttpActionContext actionContext) {
+            <span style="color: #0000ff">if</span>(<span style="color: #0000ff">this</span>.accesses != <span style="color: #0000ff">null</span> &amp;&amp; <span style="color: #0000ff">this</span>.accesses.Count() &gt; 0) {
+                <span style="color: #0000ff">foreach</span>(<span style="color: #2b91af">string</span> accessCode <span style="color: #0000ff">in</span> <span style="color: #0000ff">this</span>.accesses) {
+		    <span style="color: #008000">// your implementation to verify if the user has access to this part of the system</span>
+                    <span style="color: #2b91af">bool</span> isAuthorized = ActiveDirectoryOAuthProvider.UserHasAccess(accessCode);
+                    <span style="color: #0000ff">if</span>(isAuthorized) {
+                        <span style="color: #0000ff">return</span> <span style="color: #0000ff">true</span>;
+                    }
+                }
+            }
+
+            <span style="color: #0000ff">return</span> <span style="color: #0000ff">false</span>;
+        }
+    }
+	
+    <span style="color: #0000ff">public</span> <span style="color: #0000ff">class</span> <span style="color: #2b91af">Basic</span> : AuthorizeAttribute {
+        <span style="color: #0000ff">protected</span> <span style="color: #0000ff">override</span> <span style="color: #2b91af">bool</span> IsAuthorized(HttpActionContext actionContext) {
+            <span style="color: #0000ff">return</span> ActiveDirectoryOAuthProvider.isUserAuthenticated();
+        }
+    }
+}
+</pre>
+	</div>
+	
+	<p class="content">	
+	Considering <strong>AccessCode</strong> the enum with the access codes, we use the customized authorizarion in the API method as follows:
+	</p>
+	<div class="code">
+<pre style="margin: 0; line-height: 125%">[CustomAuthorize(AccessCode.editUser_Modify, AccessCode.editProfile_Get)] 
+[HttpPost]
+<span style="color: #0000ff">public</span> HttpResponseMessage SaveUser(UserRequest user) {
+   ...
+}
+</pre></div>
+
+	<p class="content">	
+	The parameter <strong>accessRequired</strong> in class constructor of CustomAuthorize has the access codes list passed as parameter in the configuration of the API method. This list is used in the method <i>IsAuthorized</i>.
+	</p>
+	
+	<h3 class="subtitle-content">Windows Authentication</h3>
+	<p class="content">
+	To enable the Windows authentication, in the project properties (in Visual Studio, select the project and type F4):<br/>
+- Enable Windows authentication <br/>
+- Disable Anonymous authentication <br/>
+	</p>
+	<p class="content">
+	In Web.config add <i>authentication mode="Windows"</i> to <i>system.web</i>:	
+	</p>
+	<div class="code">
+	<pre style="margin: 0; line-height: 125%">&lt;system.web&gt;
+   ...
+   &lt;authentication mode=<span style="color: #a31515">&quot;Windows&quot;</span> /&gt;
+&lt;/system.web&gt;
+</pre>
+	</div>
+	<p class="content">
+	To publish the application in IIS, we also need to enable the Windows authentication. First, check if the resource is enabled:<br/>
+	- Access control panel;<br/>
+	- Programs and Features;<br/>
+	- Turn Windows features on or off;<br/>
+	- In the dialog box:<br/>
+		-- In Internet Information Services / World Wide Web Services / Security;<br/>
+		-- Select Windows Authentication.
+	</p>
+	<p class="content">
+	In IIS:<br/>
+	- Select the API (ATENTION: do not select the web app);<br/>
+	- In "Home" panel, go to authentication:<br/>
+	-- Disable Anonymous Authentication;<br/>
+	-- Enable Windows Authentication.
+	</p>
+	
+	<h3 class="subtitle-content">Testing with the Postman</h3>
+	<p class="content">
+	To test the authentication, we can use the <a href="https://chrome.google.com/webstore/detail/postman/fhbjgbiflinjbdggehcddcbncdddomop" target="_blank">Postman</a>, setting the properties, see images below:
+	</p>
+	
+	<img src="../images/postman-auth-1.png" alt="Testing with Postman - Authorization">
+	
+	<img src="../images/postman-auth-2.png" alt="Testing with Postman - Header">
+	
+	<img src="../images/postman-auth-3.png" alt="Testing with Postman - Body">
+	
+	<p class="content">
+	Returned token:
+	</p>
+	
+	<img src="../images/postman-auth-4.png" alt="Testing with Postman - Result">
+	
+	<h3 class="subtitle-content">Implementation in Front End</h3>
+	<p class="content">
+	To request the security token in JavaScript, we have to send the follow ajax request:
+	</p>
+	
+	<div class="code">
+	<pre style="margin: 0; line-height: 125%"><span style="color: #0000ff">this</span>.getAuthorizeToken = <span style="color: #0000ff">function</span> () {
+        $.ajax({
+            <span style="color: #a31515">&quot;async&quot;</span>: <span style="color: #0000ff">false</span>,
+            <span style="color: #a31515">&quot;crossDomain&quot;</span>: <span style="color: #0000ff">true</span>,
+            <span style="color: #a31515">&quot;url&quot;</span>: <span style="color: #a31515">&quot;http://localhost/AdaLovelaceApi/Token&quot;</span>,
+            <span style="color: #a31515">&quot;method&quot;</span>: <span style="color: #a31515">&quot;POST&quot;</span>,
+            <span style="color: #a31515">&quot;headers&quot;</span>: {
+                <span style="color: #a31515">&quot;content-type&quot;</span>: <span style="color: #a31515">&quot;application/x-www-form-urlencoded&quot;</span>
+            },
+            <span style="color: #a31515">&quot;xhrFields&quot;</span>: {
+                <span style="color: #a31515">&quot;withCredentials&quot;</span>: <span style="color: #0000ff">true</span>
+            },
+            <span style="color: #a31515">&quot;data&quot;</span>: {
+                <span style="color: #a31515">&quot;grant_type&quot;</span>: <span style="color: #a31515">&quot;password&quot;</span>
+            }
+        }).done(<span style="color: #0000ff">function</span> (data, textStatus, jqXHR) {
+            sessionStorage.setItem(<span style="color: #a31515">&quot;authToken&quot;</span>, data.token_type + <span style="color: #a31515">&quot; &quot;</span> + data.access_token);
+        }).fail(<span style="color: #0000ff">function</span> (qXHR, textStatus, errorThrown) {
+            console.log(<span style="color: #a31515">&quot;error&quot;</span>, <span style="color: #a31515">&quot;User not authorized&quot;</span>);
+        });
+    }
+</pre>
+	</div>
+	
+	<p class="content">
+	The URL is the server address and the configured address in the class Startup.Auth.cs: "/Token". As response, the server will send an object with two attributes. We have to concatenate them: <i>token_type</i> e <i>access_token</i>. This token can be saved as an global variable. In this example, we saved the token in the browser variable <i>sessionStorage</i>.
+	</p>
+	<p class="content">
+	When you call the API methods, you have to pass the token in the header of the request as <i>Authorization</i>:
+	</p>
+	
+	<div class="code">
+<pre style="margin: 0; line-height: 125%">$.ajax({
+    url: ajaxUrl,
+    type: ajaxType,
+    .
+    .
+    .
+    headers: {
+        <span style="color: #a31515">&quot;Authorization&quot;</span>: sessionStorage.getItem(<span style="color: #a31515">&quot;authToken&quot;</span>)
+    }
+});
+</pre>
+	</div>
+	
+	<h3 class="subtitle-content">See more:</h3>
+	<p class="content">
+	<a href="https://www.teamscs.com/2016/07/token-based-active-directory-authentication-using-owin/" target="_blank">OAuth</a>
+	</p>
+	<p class="content">
+	<a href="https://msdn.microsoft.com/en-us//library/ee707357(v=vs.91).aspx" target="_blank">Customizing authentication rules</a>
+	</p>
+</div>
+
+<footer>&copy 2017 All rights reserved. <a href="mailto:adadevsite@gmail.com">adadevsite@gmail.com</a></footer>
+
+</body>
+</html>

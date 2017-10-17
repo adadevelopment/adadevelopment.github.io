@@ -46,6 +46,11 @@
   <lastmod>2017-06-09T13:53:03+00:00</lastmod>
 </url>
 <url>
+  <loc>https://adadevelopment.github.io/other/windows-authentication-webapi.html</loc>
+  <xhtml:link rel="alternate" hreflang="pt" href="https://adadevelopment.github.io/pt/other/windows-authentication-webapi.html" />
+  <lastmod>2017-10-17T13:53:03+00:00</lastmod>
+</url>
+<url>
   <loc>https://adadevelopment.github.io/pt/index.html</loc>
   <xhtml:link rel="alternate" hreflang="en" href="https://adadevelopment.github.io/index.html" />
   <lastmod>2017-06-09T13:53:03+00:00</lastmod>
@@ -84,5 +89,10 @@
   <loc>https://adadevelopment.github.io/pt/gdal/gdal-json-shapefile.html</loc>
   <xhtml:link rel="alternate" hreflang="en" href="https://adadevelopment.github.io/gdal/gdal-json-shapefile.html" />
   <lastmod>2017-06-09T13:53:03+00:00</lastmod>
+</url>
+<url>
+  <loc>https://adadevelopment.github.io/pt/other/windows-authentication-webapi.html</loc>
+  <xhtml:link rel="alternate" hreflang="en" href="https://adadevelopment.github.io/other/windows-authentication-webapi.html" />
+  <lastmod>2017-10-17T13:53:03+00:00</lastmod>
 </url>
 </urlset>

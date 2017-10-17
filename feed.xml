@@ -5,9 +5,15 @@
         <description>News about posts in Adadev website.</description>
         <link>https://adadevelopment.github.io</link>
         <language>en-us</language>
-        <lastBuildDate>Fri, 9 Jun 2017 18:00:00 GMT</lastBuildDate>
-        <pubDate>Fri, 9 Jun 2017 16:00:00 GMT</pubDate>
+        <lastBuildDate>Tue, 17 Oct 2017 18:00:00 GMT</lastBuildDate>
+        <pubDate>Tue, 17 Oct 2017 16:00:00 GMT</pubDate>
         <webMaster>adadevsite@gmail.com</webMaster>
+		<item>
+            <title>Windows Authentication in Web API using Token in C#</title>
+            <description>Security implementation for Web API systems in C#, Token based, using windows authentication and customized authentication rules.</description>
+            <link>https://adadevelopment.github.io/other/windows-authentication-webapi.html</link>
+            <pubDate>Tue, 17 Oct 2017 16:00:00 GMT</pubDate>
+        </item>
 		<item>
             <title>Read and Write Images with Gdal in C#</title>
             <description>How to read, write and create images with geographic information, in .TIF format, with the Gdal library in C#.</description>
