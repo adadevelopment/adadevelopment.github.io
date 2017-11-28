@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Otimização Operações no Banco de Dados C#  </title>
+	<link rel="icon" type="image/png" href="../../images/favicon.ico"/>
+    <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="content-language" content="pt-br">
+	<meta name="author" content="Tamara Mendes">
+	<meta name="reply-to" content="adadevsite@gmail">
+	<meta name="keywords" content="performance, banco de dados, linq, c#">
+	<meta name="description" content="Dicas de otimização das operações no banco de dados feitas via C#: busca e atualização">
+	<link rel="alternate" hreflang="en" href="../../other/performance-database-csharp.html" />
+	<link rel="stylesheet" href="../../style/style.css">
+	<link rel="stylesheet" href="../../style/style-topic.css">
+</head>
+<body>
+
+<div class="content-head">
+	<div class="inside-content-head">
+		<h2 class="title">Adadev</h2>
+		<h1 class="subtitle">Dicas de Otimização de Operações no Banco de Dados C#</h1>
+	</div>
+</div>
+<div class="home-button"><a href="../index.html">Adadev Home</a></div>
+<div class="internationalization"><a href="../../other/performance-database-csharp.html">[English]</a></div>
+
+<div class="div-content">
+	<div class="date-content">28 de Novembro de 2017</div>
+	<p class="content">
+	Neste artigo vou dar algumas dicas de como escrever consultas e fazer alterações na base de dados em C# de forma mais eficiente.
+	</p>	
+	
+	<h3 class="subtitle-content">Consulta com "<i>where</i>" grande</h3>
+	<p class="content">
+		Quando fazemos uma consulta com muitas condições no <i>where</i> a consulta pode ficar mais lenta de acordo com a forma como se escreve o código em C#.
+		Por exemplo, para buscar os restaurantes dentro de uma área limitada por um retângulo, passamos como parâmetro a coordenada superior a oeste e a coordenada inferior a leste e buscamos os restaurantes. Uma busca usando o LINQ com sintaxe de consulta fica assim:
+	</p>
+	<p class="content">
+		<div class="code">
+		<pre style="margin: 0; line-height: 125%"><span style="color: #0000ff">public</span> <span style="color: #0000ff">static</span> List&lt;Place&gt; GetRestaurantsInRectangleBounds(DbContext context, <span style="color: #2b91af">double</span> northwestLon, <span style="color: #2b91af">double</span> northwestLat, 
+                                                         <span style="color: #2b91af">double</span> southeastLon, <span style="color: #2b91af">double</span> southeastLat) {
+    <span style="color: #0000ff">return</span> (<span style="color: #0000ff">from</span> place <span style="color: #0000ff">in</span> context.Place
+            <span style="color: #0000ff">where</span> place.type == <span style="color: #a31515">&quot;restaurant&quot;</span> &amp;&amp;
+            place.location.x &gt;= northwestLon &amp;&amp; place.location.y &lt;= northwestLat &amp;&amp;
+            place.location.x &lt;= southeastLon &amp;&amp; place.location.y &gt;= southeastLat
+            <span style="color: #0000ff">select</span> place).ToList();
+}
+</pre>
+		</div>
+	</p>
+	<p class="content">
+		Podemos fazer a mesma pesquisa usando o LINQ com sintaxe de método e expressões <i>lambda</i>. A consulta fica mais performática quando usada com maior quantidade de dados:
+	</p>
+	
+	<p class="content">
+		<div class="code">
+		<pre style="margin: 0; line-height: 125%"><span style="color: #0000ff">public</span> <span style="color: #0000ff">static</span> List&lt;Place&gt; GetRestaurantsInRectangleBounds(DbContext context, <span style="color: #2b91af">double</span> northwestLon, <span style="color: #2b91af">double</span> northwestLat,
+                                                         <span style="color: #2b91af">double</span> southeastLon, <span style="color: #2b91af">double</span> southeastLat) {
+    <span style="color: #0000ff">return</span> context.Place.Where(place =&gt; place.type == <span style="color: #a31515">&quot;restaurant&quot;</span> &amp;&amp;
+        place.location.x &gt;= northwestLon &amp;&amp; place.location.y &lt;= northwestLat &amp;&amp;
+        place.location.x &lt;= southeastLon &amp;&amp; place.location.y &gt;= southeastLat).ToList();
+}
+</pre>
+		</div>
+	</p>
+	
+	<h3 class="subtitle-content">Atualizar um registro da base de dados</h3>
+	<p class="content">
+		A forma de atualizar um registro na base de dados interfere no tempo para fazê-lo. Uma maneira de fazer o update é mudando o estado da entidade, como mostrado no código abaixo:
+	</p>
+	<p class="content">
+		<div class="code">
+		<pre style="margin: 0; line-height: 125%"><span style="color: #0000ff">public</span> <span style="color: #0000ff">static</span> List&lt;Place&gt; UpdateRestaurant(DbContext context, Place place) {
+	place.type = <span style="color: #a31515">&quot;restaurant&quot;</span>;
+	context.Entry(place).State = EntityState.Modified;
+	context.SaveChanges();
+}
+</pre>
+		</div>
+	</p>
+	<p class="content">
+		Existem duas formas mais eficientes de fazer esse update. Uma delas é usar o mesmo contexto para buscar as entidades e salvar as modificações. Desta forma, não há necessidade de usar comandos explícitos para fazer o update, apenas modificar o objeto. Como é mostrado no código abaixo:
+	</p>
+	<p class="content">
+		<div class="code">
+		<pre style="margin: 0; line-height: 125%">List&lt;Place&gt; myPlaces = context.Place.ToList();
+<span style="color: #0000ff">foreach</span>(Place p <span style="color: #0000ff">in</span> myPlaces) {
+   p.type = <span style="color: #a31515">&quot;restaurant&quot;</span>;
+}
+context.SaveChanges();
+</pre>
+		</div>
+	</p>
+	
+	<p class="content">
+		Outra opção é atualizar apenas a(s) propriedade(s) alterada(s):
+	</p>
+	<p class="content">
+		<div class="code">
+		<pre style="margin: 0; line-height: 125%">List&lt;Place&gt; myPlaces;
+
+using(DbContext context = <span style="color: #0000ff">new</span> AdaLovelaceContext()){
+	myPlaces = context.Place.ToList();
+}
+
+<span style="color: #0000ff">foreach</span>(Place p <span style="color: #0000ff">in</span> myPlaces) {
+   p.type = <span style="color: #a31515">&quot;restaurant&quot;</span>;
+   context.Place.Attach(p);
+   context.Entry(p).Property(<span style="color: #a31515">&quot;type&quot;</span>).IsModified = <span style="color: #0000ff">true</span>;
+}
+context.SaveChanges();
+</pre>
+		</div>
+	</p>
+	<h3 class="subtitle-content">Veja mais em:</h3>
+	<p class="content">
+	<a href="https://docs.microsoft.com/pt-br/dotnet/csharp/programming-guide/concepts/linq/query-syntax-and-method-syntax-in-linq" target="_blank">Sintaxe de consulta e sintaxe de método em LINQ (C#)</a>
+	</p>
+	<p class="content">
+	<a href="https://ferhenriquef.com/2012/10/15/entity-framework-como-atualizar-apenas-um-campo/" target="_blank">Atualização de um campo</a>
+	</p>
+</div>
+
+<footer>&copy 2017 Todos direitos reservados. <a href="mailto:adadevsite@gmail.com">adadevsite@gmail.com</a></footer>
+
+</body>
+</html>
