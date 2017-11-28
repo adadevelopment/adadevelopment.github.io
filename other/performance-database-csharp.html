@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Database Operations Otimization C#  </title>
+	<link rel="icon" type="image/png" href="../images/favicon.ico"/>
+    <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="content-language" content="en">
+	<meta name="author" content="Tamara Mendes">
+	<meta name="reply-to" content="adadevsite@gmail">
+	<meta name="keywords" content="performance, database, linq, c#">
+	<meta name="description" content="Database Operations Otimization Tips in C#: search and update"/>
+	<link rel="alternate" hreflang="pt" href="../pt/other/performance-database-csharp.html" />
+	<link rel="stylesheet" href="../style/style.css">
+	<link rel="stylesheet" href="../style/style-topic.css">
+</head>
+<body>
+
+<div class="content-head">
+	<div class="inside-content-head">
+		<h2 class="title">Adadev</h2>
+		<h1 class="subtitle">Database Operations Otimization Tips in C#</h1>
+	</div>
+</div>
+<div class="home-button"><a href="../index.html">Adadev Home</a></div>
+<div class="internationalization"><a href="../pt/other/performance-database-csharp.html">[Português]</a></div>
+
+<div class="div-content">
+	<div class="date-content">November 28, 2017</div>
+	<p class="content">
+	In this article I wrote some tips of how to write queries for database in C# with higher performance.
+	</p>	
+	
+	<h3 class="subtitle-content">Query with big "<i>where</i>"</h3>
+	<p class="content">
+		When we  write a query with many conditions in <i>where</i> the query can be slower according with how we write the code in C#.
+		For example, to search the restaurants inside a limited by a rectangle area, we pass the upper west coordinate and the lower east coordinate as parameters to search the restaurants. A search using LINQ with query syntax is in the following code:
+	</p>
+	<p class="content">
+		<div class="code">
+		<pre style="margin: 0; line-height: 125%"><span style="color: #0000ff">public</span> <span style="color: #0000ff">static</span> List&lt;Place&gt; GetRestaurantsInRectangleBounds(DbContext context, <span style="color: #2b91af">double</span> northwestLon, <span style="color: #2b91af">double</span> northwestLat, 
+                                                         <span style="color: #2b91af">double</span> southeastLon, <span style="color: #2b91af">double</span> southeastLat) {
+    <span style="color: #0000ff">return</span> (<span style="color: #0000ff">from</span> place <span style="color: #0000ff">in</span> context.Place
+            <span style="color: #0000ff">where</span> place.type == <span style="color: #a31515">&quot;restaurant&quot;</span> &amp;&amp;
+            place.location.x &gt;= northwestLon &amp;&amp; place.location.y &lt;= northwestLat &amp;&amp;
+            place.location.x &lt;= southeastLon &amp;&amp; place.location.y &gt;= southeastLat
+            <span style="color: #0000ff">select</span> place).ToList();
+}
+</pre>
+		</div>
+	</p>
+	<p class="content">
+		We can write the same search using LINQ with method syntax and <i>lambda</i> expressions. The search is faster when we have higher data volume:
+	</p>
+	
+	<p class="content">
+		<div class="code">
+		<pre style="margin: 0; line-height: 125%"><span style="color: #0000ff">public</span> <span style="color: #0000ff">static</span> List&lt;Place&gt; GetRestaurantsInRectangleBounds(DbContext context, <span style="color: #2b91af">double</span> northwestLon, <span style="color: #2b91af">double</span> northwestLat,
+                                                         <span style="color: #2b91af">double</span> southeastLon, <span style="color: #2b91af">double</span> southeastLat) {
+    <span style="color: #0000ff">return</span> context.Place.Where(place =&gt; place.type == <span style="color: #a31515">&quot;restaurant&quot;</span> &amp;&amp;
+        place.location.x &gt;= northwestLon &amp;&amp; place.location.y &lt;= northwestLat &amp;&amp;
+        place.location.x &lt;= southeastLon &amp;&amp; place.location.y &gt;= southeastLat).ToList();
+}
+</pre>
+		</div>
+	</p>
+	
+	<h3 class="subtitle-content">Update a database record</h3>
+	<p class="content">
+		The way of update a database record influences the time to update. A way to update the record is changing the entity state, as the following code:
+	</p>
+	<p class="content">
+		<div class="code">
+		<pre style="margin: 0; line-height: 125%"><span style="color: #0000ff">public</span> <span style="color: #0000ff">static</span> List&lt;Place&gt; UpdateRestaurant(DbContext context, Place place) {
+	place.type = <span style="color: #a31515">&quot;restaurant&quot;</span>;
+	context.Entry(place).State = EntityState.Modified;
+	context.SaveChanges();
+}
+</pre>
+		</div>
+	</p>
+	<p class="content">
+	There's two more efficient ways to update the records. One of them is to use the same context to search the entities and save the changes. This way, we do not have to use explicit commands to update, we have only to change the object, as the following code:
+	</p>
+	<p class="content">
+		<div class="code">
+		<pre style="margin: 0; line-height: 125%">List&lt;Place&gt; myPlaces = context.Place.ToList();
+<span style="color: #0000ff">foreach</span>(Place p <span style="color: #0000ff">in</span> myPlaces) {
+   p.type = <span style="color: #a31515">&quot;restaurant&quot;</span>;
+}
+context.SaveChanges();
+</pre>
+		</div>
+	</p>
+	
+	<p class="content">
+		Another option is update only the change property(ies):
+	</p>
+	<p class="content">
+		<div class="code">
+		<pre style="margin: 0; line-height: 125%">List&lt;Place&gt; myPlaces;
+
+using(DbContext context = <span style="color: #0000ff">new</span> AdaLovelaceContext()){
+	myPlaces = context.Place.ToList();
+}
+
+<span style="color: #0000ff">foreach</span>(Place p <span style="color: #0000ff">in</span> myPlaces) {
+   p.type = <span style="color: #a31515">&quot;restaurant&quot;</span>;
+   context.Place.Attach(p);
+   context.Entry(p).Property(<span style="color: #a31515">&quot;type&quot;</span>).IsModified = <span style="color: #0000ff">true</span>;
+}
+context.SaveChanges();
+</pre>
+		</div>
+	</p>
+	<h3 class="subtitle-content">See more:</h3>
+	<p class="content">
+	<a href="https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/concepts/linq/query-syntax-and-method-syntax-in-linq" target="_blank">Query Syntax and Method Syntax in LINQ (C#)</a>
+	</p>
+	<p class="content">
+	<a href="http://www.learnentityframeworkcore.com/dbcontext/modifying-data" target="_blank">Modifying data via the DbContext</a>
+	</p>
+	
+</div>
+
+<footer>&copy 2017 All rights reserved. <a href="mailto:adadevsite@gmail.com">adadevsite@gmail.com</a></footer>
+
+</body>
+</html>
