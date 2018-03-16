@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Código como Documentação</title>
+	<link rel="icon" type="image/png" href="../../images/favicon.ico"/>
+    <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="content-language" content="pt-br">
+	<meta name="author" content="Tamara Mendes">
+	<meta name="reply-to" content="adadevsite@gmail">
+	<meta name="keywords" content="documentar codificando, boas práticas, bad smell">
+	<meta name="description" content="Como é possível fazer códigos mais fáceis de entender sem, necessariamente, escrever documentações extensas."> 
+	<link rel="alternate" hreflang="en" href="../../engineering/code-as-documentation.html" />
+	<link rel="stylesheet" href="../../style/style.css">
+	<link rel="stylesheet" href="../../style/style-topic.css">
+</head>
+<body>
+
+<div class="content-head">
+	<div class="inside-content-head">
+		<h2 class="title">Adadev</h2>
+		<h1 class="subtitle">Código como Documentação</h1>
+	</div>
+</div>
+<div class="home-button"><a href="../index.html">Adadev Home</a></div>
+<div class="internationalization"><a href="../../engineering/code-as-documentation.html">[English]</a></div>
+
+<div class="div-content">
+	<div class="date-content">16 de Março de 2018</div>
+	<p class="content">
+	Construir software é uma atividade complicada e desafiadora. Manter e evoluir um software pode ser tão complicado quanto construí-lo. À medida que o software evolui, o mesmo é modificado e adaptado a novos requisitos, tornando-se mais complexo e se desviando da arquitetura original. Por isso, a maior parte dos custos do desenvolvimento de um software é a sua manutenção. Nesse período, a maior parte do tempo é gasta tentando entender o sistema, explorando código desconhecido, conforme é mostrado no gráfico abaixo.
+	</p>
+	<img src="../../images/maintenance-graph-pt.png" alt="Tempo Gasto no Ciclo de Vida do Software [1,2]">
+	<p class="content">
+	Quando, mesmo depois de muito tempo de análise, o desenvolvedor não consegue entender um código e não há documentação ou ela é pobre, ele acaba reescrevendo-o, o que facilita a inserção de defeitos e de mudanças indesejadas no comportamento do sistema.
+	</p>
+	<p class="content">
+	Por isso, além de projetarem e manterem uma boa arquitetura, os desenvolvedores devem se esforçar para escreverem códigos claros e legíveis. O primeiro passo para isso é reconhecer que o código-fonte é uma forma de documentação. Ele tem que ser capaz de dizer o que faz de forma clara. O sistema deve ser construído de forma que outros desenvolvedores o compreendam facilmente. Nesse contexto, serão discutidas ao longo deste artigo algumas práticas que viabilizam o melhor entendimento de um software.
+	</p>
+	
+	<h3 class="subtitle-content">Código limpo</h3>
+	
+	<p class="content">
+	Segundo a metodologia ágil, o código-fonte é a principal forma de documentação do software, pois é a única suficientemente detalhada e precisa. Logo, se sua legibilidade não estiver boa, os custos com manutenção, evolução e retrabalho aumentam. Mas como escrever um código claro, limpo e de fácil entendimento? Não é simples, mas algumas recomendações básicas podem ajudar, como as citadas a seguir.
+	</p>
+	<p class="content">
+	Dê nomes significativos para variáveis, métodos e classes (mesmo que fiquem longos). Se o nome da classe ou método descreve o que ele faz e se o nome do campo informa o que ele contém, não é necessário escrever um comentário para dar essa informação. A ideia é que, ao ler o nome de uma variável ou método já possamos entender o que ele faz. Abaixo, são mostrados dois exemplos de código onde a mesma declaração de variável é feita de formas diferentes.
+	</p>
+	<p class="content">
+	Código ruim:
+	</p>
+	<div class="code">
+	<pre style="margin: 0; line-height: 125%"><span style="color: #2b91af">int</span> d; <span style="color: #008000">// tempo decorrido em dias</span>
+</pre>
+	</div>
+	<p class="content">
+	Código bom:
+	</p>
+	<div class="code">
+	<pre style="margin: 0; line-height: 125%">
+<span style="color: #2b91af">int</span> tempoDecorridoEmDias;
+</pre>
+	</div>
+	<p class="content">
+	Métodos grandes são difíceis de ler e entender, principalmente se ele tem mui-tas responsabilidades. Escreva pequenos métodos, mesmo que eles tenham apenas 3 ou 4 linhas. Cada método deve ter apenas uma responsabilidade e seu nome deve descrevê-la. Quando fica difícil escolher um nome descritivo para um método, provavelmente ele está grande ou fazendo mais de uma coisa. Se um método ficou grande, extraia cada funcionalidade em métodos menores. 
+	</p>
+	<p class="content">
+	Ao escrever um código, tenha em mente a possibilidade do mesmo ser reutilizado em outra parte do próprio sistema ou em outros sistemas, inclusive, podendo ser salvo em um repositório de componentes de software. Logo, as classes e métodos devem estar desacopladas o máximo possível. Não tenha preguiça de criar novas classes! Novos assuntos e novas funcionalidades demandam novas classes e novos métodos.
+	</p>
+	
+	<h3 class="subtitle-content">Controle de versionamento</h3>
+	
+	<p class="content">
+	Umas das formas de saber, no geral, o que está sendo feito no projeto é acompanhar os logs de versão. A equipe pode se informar rapidamente sobre o que cada membro da equipe está fazendo. Os logs auxiliam na identificação do ponto onde um defeito foi inserido. São usados para registrar marcos para publicação nos servidores. São também fundamentais quando há a necessidade de voltar para uma versão onde determinada funcionalidade foi alterada.
+	</p>
+	<p class="content">
+	Todas as vantagens citadas acima ficam comprometidas quando os logs de commit não são feitos ou não são significativos. Por isso, os commits devem ser feitos, preferencialmente, por tarefa, com descrições sucintas e significativas nos logs. Isso mantém os códigos separados e auxilia o entendimento das classes e arquivos relacionados a determinada funcionalidade. Nesse sentido, um commit deve ser feito com cuidado, observando cada classe alterada, descartando alterações desnecessárias e assegurando que não causará quebra do build.
+	</p>
+	
+	<h3 class="subtitle-content">Comentários</h3>
+	<p class="content">
+	Um código limpo informa o que ele faz, mas dificilmente deixa claro qual sua intenção e o porquê foi feito daquela maneira. Para isso, pode-se contar com os comentários, que é um recurso importante para complementar o entendimento do código.
+	</p>
+	<p class="content">
+	O código está complicado? Primeiro, tente descomplicar, e então comente! Existem algoritmos com fórmulas, otimizações e cálculos mais complexos do que o normal. Nesses casos, códigos limpos e nomes significativos podem não ser suficientes. 
+	</p>
+	<p class="content">
+	Existem comentários especiais como "TODO" e "FIXME", usados para registrar lembretes para tarefas futuras de melhorias e correções. Use-os quando houver um código incompleto, incorreto ou que pode ser melhorado, mas não há tempo de fazê-lo no momento.
+	</p>
+	<p class="content">
+	Use os comentários também para inserir referências que forneçam mais informações sobre o algoritmo escolhido. Se existe um sistema de controle de tarefas, informe o link para a tarefa relacionada ao código. Usou um algoritmo de algum artigo científico? Reusou um algoritmo de alguma plataforma ou site? Informe a fonte nos comentários. 
+	</p>
+	<h3 class="subtitle-content">Documentar é ganhar tempo!</h3>
+	<p class="content">
+	Considerar o código-fonte como a principal forma de documentar não significa que podemos abandonar documentação externa. A documentação de um software inclui todos documentos descrevendo o sistema, desde a especificação de requisitos até plano de testes finais.
+	</p>
+	<p class="content">
+	Em suma, é de grande importância cuidar para que colegas de equipe e futuros mantenedores   consigam entender o que você codifica. Aproveite as oportunidades de outras pessoas lerem seu código. Descubra o que as pessoas acharam fácil de entender e o que elas acharam confuso. Afinal, código limpo e bem documentado facilita a manutenção, reduzindo custos, estresse e economizando tempo!
+	</p>
+	
+	<h3 class="subtitle-content">Referências:</h3>
+	<p class="content">[1] Andrew Ko; Brad Myers; Michael Coblenz; HtetHtet Aung. An Exploratory Study of How Developers Seek, Relate, and Collect Relevant Information during Software Maintenance Tasks. IEEE. p. 971-987. 2006.</p>
+	<p class="content">[2] Stephen Schach. Object-Oriented and Classical Software Engineering. McGraw-Hill, New York, USA. 2006.</p>
+
+
+	<h3 class="subtitle-content">Veja mais em:</h3>
+	<p class="content">
+	<a href="https://martinfowler.com/bliki/CodeAsDocumentation.html" target="_blank">Code As Documentation</a>
+	</p>
+	<p class="content">
+	<a href="http://intentor.com.br/svn-conceitos-boas-praticas-dicas-de-utilizacao" target="_blank">SVN - Boas Práticas</a>
+	</p>
+	<p class="content">
+	<a href="https://dev.to/raddikx/dont-document-your-code-code-your-documentation" target="_blank">Code Your Documentation</a>
+	</p>
+</div>
+
+<footer>&copy 2017 Todos direitos reservados. <a href="mailto:adadevsite@gmail.com">adadevsite@gmail.com</a></footer>
+
+</body>
+</html>
