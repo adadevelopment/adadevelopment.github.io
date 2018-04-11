@@ -113,9 +113,26 @@ ul.topic {
 	}
 }
 
+.back-begin {
+	display: block;
+	text-align: center;
+	margin-bottom: 10px;
+	font-size: 20px;
+	color: rgb(60, 140, 140);
+	line-height: 150%;
+}
+
+.back-begin  a {
+	color: rgb(60, 140, 140);
+}
+
 footer {
 	line-height: 60px;
 	background-color: rgb(70, 160, 160);
 	text-align: center;
 	vertical-align: middle;
+}
+
+.email {
+	font-weight: bold;
 }
