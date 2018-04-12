@@ -16,25 +16,14 @@
 	display: table-cell;
 }
 .home-button {
-	text-align: left;
-	float: left;
-	padding: 5px;
-	vertical-align: middle;	
-	margin: 5px;
+	float: left;	
+	margin: 1px;
 }
 
-.home-button  a {
-	padding: 5px;	
-	border: 1px;
-	border-radius: 3px;
-	color: white;
-	background-color: rgb(70, 160, 160);
+.home-button img {	
+	margin: 0px;
 }
 
-.home-button  a:hover {
-    background-color: #eee;
-	color: rgb(50, 50, 50);
-}
 
 .internationalization {
 	text-align: right;

@@ -24,26 +24,22 @@
 
 ul.menu {
 	list-style-type: none;
-    margin-top: 10px;
+    margin-top: 5px;
 	text-align: center;
-	font-size: 20px;
+	font-size: 22px;
 }
 
 .menu li {
     display: inline-block;
-	margin-top: 10px;
-	margin-bottom:10px;
 	text-align: center;
 }
 .menu li a {
 	padding: 5px;
-	border: 1px;
-	border-radius: 3px;
-	color: white;
-	background-color: rgb(70, 160, 160);
+	color: rgb(60, 130, 130);
+	vertical-align: super;
+	text-decoration: underline;
 }
 
 .menu li a:hover {
-    background-color: #eee;
 	color: rgb(50, 50, 50);
 }
