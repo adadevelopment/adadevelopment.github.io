@@ -31,6 +31,7 @@ ul.menu {
 
 .menu li {
     display: inline-block;
+    padding-top: 5px;
 }
 .menu li a {
 	padding-right: 2px;
