@@ -12,10 +12,6 @@
 	text-decoration: none;
 }
 
-.index-head a:visited{
-	color: white;
-}
-
 .inside-index-head {
 	padding-top: 45px;
 	min-height: 160px;
@@ -26,10 +22,6 @@
 	float: right;
 	margin: 10px;
 	padding-top: 10px;
-}
-
-.internationalization  a:visited{ 
-	color: black;
 }
 
 ul.menu {
