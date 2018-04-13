@@ -5,33 +5,42 @@
 	background-color: rgb(70, 160, 160);
 	text-align: center;
 	color: white;
-	min-height: 250px;
-	display: table;
 	width: 100%;
 }
 
-.inside-index-head {
-	vertical-align: middle;
-	position: relative;
-	display: table-cell;
+.not-underline-a:hover{
+	text-decoration: none;
 }
+
+.index-head a:visited{
+	color: white;
+}
+
+.inside-index-head {
+	padding-top: 45px;
+	min-height: 160px;
+}
+
 .internationalization {
 	text-align: right;
 	float: right;
 	margin: 10px;
-	vertical-align: middle;	
+	padding-top: 10px;
+}
+
+.internationalization  a:visited{ 
+	color: black;
 }
 
 ul.menu {
 	list-style-type: none;
-	text-align: center;
 	font-size: 20px;
-	background-color: rgb(70, 160, 160);
+	text-align: left;
+	padding-top: 10px
 }
 
 .menu li {
     display: inline-block;
-    padding-top: 5px;
 }
 .menu li a {
 	padding-right: 2px;

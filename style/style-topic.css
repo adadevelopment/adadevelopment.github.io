@@ -6,18 +6,24 @@
 	text-align: center;
 	color: white;
 	min-height: 150px;
-	display: table;
 	width: 100%;
 }
 
 .inside-content-head {
 	vertical-align: middle;
-	position: relative;
-	display: table-cell;
+	padding-top: 30px;
 }
+
+.content-menu {
+	display: flow-root;
+}
+
 .home-button {
 	float: left;	
 	margin: 1px;
+}
+.home-button img:hover {
+	 background-color: white;
 }
 
 .home-button img {	
