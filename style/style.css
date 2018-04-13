@@ -26,9 +26,6 @@ article, aside, details, figcaption, figure,
 footer, header, hgroup, menu, nav, section {
 	display: block;
 }
-body {
-	line-height: 1;
-}
 ol, ul {
 	list-style: none;
 }
@@ -138,8 +135,8 @@ ul.topic {
 footer {
 	background-color: rgb(70, 160, 160);
 	text-align: center;
-	padding-top: 25px;
-    padding-bottom: 25px;
+	padding-top: 20px;
+    padding-bottom: 20px;
 }
 
 .email {

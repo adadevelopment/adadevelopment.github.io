@@ -5,17 +5,18 @@
 	background-color: rgb(70, 160, 160);/* outra cor possivel: rgb(130, 180, 180) */
 	text-align: center;
 	color: white;
-	min-height: 150px;
+	min-height: 160px;
 	width: 100%;
+	display: table;
+}
+
+.content-head a:hover{
+	text-decoration: none;
 }
 
 .inside-content-head {
 	vertical-align: middle;
-	padding-top: 30px;
-}
-
-.content-menu {
-	display: flow-root;
+	display: table-cell;
 }
 
 .home-button {
@@ -32,8 +33,8 @@
 
 .internationalization {
 	text-align: right;
-	margin: 10px;
-	vertical-align: middle;	
+	margin-right: 10px;
+	padding-top: 10px;
 }
 
 .div-content {
