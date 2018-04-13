@@ -44,17 +44,18 @@ table {
 	border-collapse: collapse;
 	border-spacing: 0;
 }
-a:visited {
-    color: black;
-}
-a {
-	color: black;
-}
 
 /* general */
 
 body {
 	font-family: Arial, Helvetica, sans-serif;
+}
+
+a:hover{
+	text-decoration: underline;
+}
+a, a:visited, a:active {
+  color: inherit;
 }
 
 .title {
@@ -65,6 +66,14 @@ body {
 .subtitle {
 	font-size: 28px;
 	text-shadow: 2px 2px #4f6274;
+}
+
+.internationalization  a:visited{ 
+	color: black;
+}
+
+.internationalization  a{ 
+	color: black;
 }
 
 ul.topic {
@@ -130,20 +139,9 @@ footer {
 	background-color: rgb(70, 160, 160);
 	text-align: center;
 	padding-top: 25px;
-    	padding-bottom: 25px;
+    padding-bottom: 25px;
 }
 
 .email {
 	font-weight: bold;
-}
-
-a:hover{
-	text-decoration: underline;
-}
-a, a:visited, a:active {
-  color: inherit;
-}
-
-.internationalization  a:visited{ 
-	color: black;
 }
