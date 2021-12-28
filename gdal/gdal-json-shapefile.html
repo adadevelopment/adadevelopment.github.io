@@ -264,7 +264,6 @@ CompressToZipFile(<span style="color: #0000ff">new</span> List&lt;<span style="c
             geometry.ExportToWkt(<span style="color: #0000ff">out</span> wktgeometry);
             Geometry newGeometry = Geometry.CreateFromWkt(wktgeometry);
             newGeometry.AssignSpatialReference(reference);
-            newGeometry.SetPoint(0, geometry.GetX(0), geometry.GetY(0), 0);
 
             feature.SetGeometry(newGeometry);
             layer.CreateFeature(feature);
