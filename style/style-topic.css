@@ -1,7 +1,8 @@
 .content-head { 
-    background-image: url('../images/background.png');
+    background-image: url('../images/ada-dev-pp.png');
     background-repeat: no-repeat;
-    background-position: center; 
+    background-position: left;	
+	background-position-y: bottom;
 	background-color: rgb(70, 160, 160);/* outra cor possivel: rgb(130, 180, 180) */
 	text-align: center;
 	color: white;
@@ -34,7 +35,7 @@
 .internationalization {
 	text-align: right;
 	margin-right: 10px;
-	padding-top: 10px;
+	padding-top: 30px;
 }
 
 .div-content {
